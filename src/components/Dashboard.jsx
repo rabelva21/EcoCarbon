@@ -1,6 +1,5 @@
 import { useEffect, useState, useMemo } from "react";
 import { supabase } from "../supabaseClient";
-// Pastikan library ini sudah diinstall: npm install framer-motion canvas-confetti
 import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
 
@@ -117,7 +116,6 @@ const HomeView = ({ activities, activityType, setActivityType, inputValue, setIn
             <div className="grid gap-4">
               <AnimatePresence>
               {activities.map((item) => (
-                // Tambahkan onClick untuk melihat detail
                 <motion.div 
                     key={item.id} 
                     onClick={() => onViewDetail(item)}
@@ -136,7 +134,6 @@ const HomeView = ({ activities, activityType, setActivityType, inputValue, setIn
                   <div className="flex items-center gap-4">
                     <span className="font-extrabold text-xl text-slate-700">{item.amount} <span className="text-sm font-normal text-slate-400">kg</span></span>
                     
-                    {/* Tombol Aksi (Stop Propagation agar tidak memicu detail view saat diklik) */}
                     <div className="flex gap-1 pl-4 border-l border-slate-100 opacity-50 group-hover:opacity-100 transition-opacity">
                       <button onClick={(e) => { e.stopPropagation(); handleEdit(item); }} className="p-2 text-slate-400 hover:text-amber-500 rounded-lg"><Icons.Pencil /></button>
                       <button onClick={(e) => { e.stopPropagation(); handleDelete(item.id); }} className="p-2 text-slate-400 hover:text-red-500 rounded-lg"><Icons.Trash /></button>
@@ -193,7 +190,7 @@ const HomeView = ({ activities, activityType, setActivityType, inputValue, setIn
   );
 };
 
-// --- HALAMAN DETAIL AKTIVITAS (Syarat Tugas Akhir: Detail Page 1) ---
+// --- HALAMAN DETAIL AKTIVITAS ---
 const ActivityDetailView = ({ activity, onBack }) => {
     return (
         <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="max-w-2xl mx-auto">
@@ -303,6 +300,7 @@ const LeaderboardView = ({ session, onViewUser }) => {
         if (!groupedData[uid]) {
           groupedData[uid] = { id: uid, name: displayName, avatar: displayAvatar, total: 0, daily: 0, monthly: 0 };
         }
+        // Always update with the latest non-Anonymous name found
         if (displayName !== "Anonymous") groupedData[uid].name = displayName;
         if (displayAvatar) groupedData[uid].avatar = displayAvatar;
 
@@ -344,7 +342,6 @@ const LeaderboardView = ({ session, onViewUser }) => {
          leaderboardData.map((user, index) => {
             const colorClass = rankColors[index] || rankColors[3]; 
             return (
-            // Tambahkan onClick untuk melihat detail user lain
             <motion.div 
                 layout key={user.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
                 onClick={() => onViewUser(user)}
@@ -369,7 +366,7 @@ const LeaderboardView = ({ session, onViewUser }) => {
   );
 };
 
-// --- HALAMAN DETAIL USER (Syarat Tugas Akhir: Detail Page 2) ---
+// --- HALAMAN DETAIL USER ---
 const UserDetailView = ({ user, onBack }) => {
     return (
         <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="max-w-md mx-auto">
@@ -424,12 +421,34 @@ const ProfileView = ({ session, totalEmission }) => {
   const handleUpdateProfile = async (e) => {
     e.preventDefault();
     setLoading(true);
-    const { error: authError } = await supabase.auth.updateUser({ data: { user_name: username, avatar_url: avatarUrl } });
-    if (authError) { alert("Gagal update auth: " + authError.message); setLoading(false); return; }
-    const { error: dbError } = await supabase.from('footprints').update({ user_name: username, avatar_url: avatarUrl }).eq('user_id', session.user.id);
+    
+    // 1. UPDATE AUTH METADATA
+    const { error: authError } = await supabase.auth.updateUser({
+      data: { user_name: username, avatar_url: avatarUrl }
+    });
+
+    if (authError) {
+        alert("Gagal update auth: " + authError.message);
+        setLoading(false);
+        return;
+    }
+
+    // 2. UPDATE FOOTPRINTS DATABASE (Agar leaderboard berubah untuk data lama)
+    const { error: dbError } = await supabase
+        .from('footprints')
+        .update({ user_name: username, avatar_url: avatarUrl })
+        .eq('user_id', session.user.id);
+
     setLoading(false);
-    if (dbError) { console.error("Gagal sinkronisasi:", dbError); alert("Profil terupdate tapi data lama mungkin belum berubah."); } 
-    else { alert("Profil & Data berhasil diperbarui!"); setIsEditMode(false); window.location.reload(); }
+
+    if (dbError) {
+        console.error("Gagal sinkronisasi data footprints:", dbError);
+        alert("Profil terupdate tapi data lama mungkin belum berubah.");
+    } else {
+        alert("Profil & Data Peringkat berhasil diperbarui!");
+        setIsEditMode(false);
+        window.location.reload(); 
+    }
   };
 
   return (
