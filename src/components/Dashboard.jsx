@@ -3,13 +3,13 @@ import { supabase } from "../supabaseClient";
 import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
 
-
 // ==========================================
 // 1. KOLEKSI ASET & IKON
 // ==========================================
 const Icons = {
   Leaf: () => <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 3v4M3 5v4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path></svg>,
-  Tree: () => <svg className="w-10 h-10" fill="currentColor" stroke="none" viewBox="0 0 24 24"><path d="M12 2L2 19h20L12 2zm0 3.5l6 10.5h-12l6-10.5z" opacity=".5"/><path d="M12 5l-7 12h14l-7-12zm0 14v3h-2v-3h2z"/></svg>,
+  Tree: () => <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>,
+  TreeSolid: () => <svg className="w-10 h-10" fill="currentColor" stroke="none" viewBox="0 0 24 24"><path d="M12 2L2 19h20L12 2zm0 3.5l6 10.5h-12l6-10.5z" opacity=".5"/><path d="M12 5l-7 12h14l-7-12zm0 14v3h-2v-3h2z"/></svg>,
   Fire: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.879 16.121A3 3 0 1012.015 11L11 14H9c0 .768.293 1.536.879 2.121z"></path></svg>,
   Trash: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>,
   Plus: () => <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4"></path></svg>,
@@ -19,8 +19,10 @@ const Icons = {
   Calc: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>,
   Cancel: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg>,
   Calendar: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>,
-  Info: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>,
+  Info: () => <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>,
   ArrowLeft: () => <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>,
+  Trophy: () => <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 3v4M3 5v4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path></svg>,
+  User: () => <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>,
 };
 
 // ==========================================
@@ -40,7 +42,6 @@ const EMISSION_FACTORS = {
 const pageVariants = { initial: { opacity: 0, y: 10 }, in: { opacity: 1, y: 0 }, out: { opacity: 0, y: -10 } };
 const pageTransition = { type: "tween", ease: "anticipate", duration: 0.4 };
 
-// Helper untuk filter tanggal
 const isToday = (dateString) => {
   if (!dateString) return false;
   const date = new Date(dateString);
@@ -59,32 +60,28 @@ const isThisMonth = (dateString) => {
 };
 
 // ==========================================
-// 3. SUB-COMPONENTS (HALAMAN & DETAIL)
+// 3. SUB-COMPONENTS
 // ==========================================
 
-// --- HALAMAN 1: BERANDA (DASHBOARD) ---
+// --- HALAMAN 1: BERANDA (PERBAIKAN LAYOUT MOBILE) ---
 const HomeView = ({ activities, activityType, setActivityType, inputValue, setInputValue, calculatedEmission, loading, handleSubmit, handleEdit, handleDelete, isEditing, cancelEdit, onViewDetail }) => {
   
   const stats = useMemo(() => {
-    let daily = 0;
-    let monthly = 0;
-    let total = 0;
-
+    let daily = 0; let monthly = 0; let total = 0;
     activities.forEach(item => {
       const amount = parseFloat(item.amount) || 0;
       total += amount;
       if (isToday(item.created_at)) daily += amount;
       if (isThisMonth(item.created_at)) monthly += amount;
     });
-
     return { daily, monthly, total };
   }, [activities]);
 
   return (
-    <motion.div initial="initial" animate="in" exit="out" variants={pageVariants} transition={pageTransition} className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+    <motion.div initial="initial" animate="in" exit="out" variants={pageVariants} transition={pageTransition} className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start pb-24">
       <div className="lg:col-span-2 space-y-8">
         
-        {/* STATISTIK 3 GRID */}
+        {/* STATISTIK */}
         <div>
             <h3 className="text-xl font-bold text-slate-800 mb-4 flex items-center gap-2">📊 Statistik Emisi</h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -106,7 +103,7 @@ const HomeView = ({ activities, activityType, setActivityType, inputValue, setIn
             </div>
         </div>
 
-        {/* LIST RIWAYAT (BISA DIKLIK KE DETAIL) */}
+        {/* LIST RIWAYAT - PERBAIKAN TOMBOL DELETE */}
         <div>
           <h3 className="text-xl font-bold text-slate-800 mb-4 flex items-center gap-2">📝 Riwayat Aktivitas</h3>
           {activities.length === 0 ? (
@@ -123,21 +120,22 @@ const HomeView = ({ activities, activityType, setActivityType, inputValue, setIn
                     initial={{ opacity: 0, x: -20 }} 
                     animate={{ opacity: 1, x: 0 }} 
                     exit={{ opacity: 0, height: 0 }} 
-                    className="group relative flex justify-between items-center p-5 rounded-2xl bg-white/80 border border-white shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer"
+                    className="group relative flex flex-col sm:flex-row justify-between items-start sm:items-center p-5 rounded-2xl bg-white/80 border border-white shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer gap-4"
                 >
-                  <div className="flex items-center gap-5">
-                    <div className="p-3 rounded-2xl bg-emerald-50 text-emerald-600 shadow-sm"><Icons.Fire /></div>
-                    <div>
-                      <h4 className="font-bold text-lg text-slate-700">{item.activity}</h4>
+                  <div className="flex items-center gap-4 w-full sm:w-auto">
+                    <div className="p-3 rounded-2xl bg-emerald-50 text-emerald-600 shadow-sm shrink-0"><Icons.Fire /></div>
+                    <div className="min-w-0 flex-1">
+                      <h4 className="font-bold text-lg text-slate-700 truncate">{item.activity}</h4>
                       <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">{new Date(item.created_at).toLocaleDateString()}</p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-4">
+                  
+                  {/* PERBAIKAN: Layout tombol agar aman di HP */}
+                  <div className="flex items-center justify-between w-full sm:w-auto gap-4 pl-0 sm:pl-4 sm:border-l border-slate-100">
                     <span className="font-extrabold text-xl text-slate-700">{item.amount} <span className="text-sm font-normal text-slate-400">kg</span></span>
-                    
-                    <div className="flex gap-1 pl-4 border-l border-slate-100 opacity-50 group-hover:opacity-100 transition-opacity">
-                      <button onClick={(e) => { e.stopPropagation(); handleEdit(item); }} className="p-2 text-slate-400 hover:text-amber-500 rounded-lg"><Icons.Pencil /></button>
-                      <button onClick={(e) => { e.stopPropagation(); handleDelete(item.id); }} className="p-2 text-slate-400 hover:text-red-500 rounded-lg"><Icons.Trash /></button>
+                    <div className="flex gap-2">
+                      <button onClick={(e) => { e.stopPropagation(); handleEdit(item); }} className="p-2 bg-amber-50 text-amber-500 hover:bg-amber-100 rounded-xl transition-colors"><Icons.Pencil /></button>
+                      <button onClick={(e) => { e.stopPropagation(); handleDelete(item.id); }} className="p-2 bg-red-50 text-red-500 hover:bg-red-100 rounded-xl transition-colors"><Icons.Trash /></button>
                     </div>
                   </div>
                 </motion.div>
@@ -153,7 +151,7 @@ const HomeView = ({ activities, activityType, setActivityType, inputValue, setIn
         <div className={`p-8 rounded-[2.5rem] border shadow-2xl transition-all duration-500 ${isEditing ? 'bg-amber-50 border-amber-200' : 'bg-white border-white/50'}`}>
           <div className="flex items-center justify-between mb-6">
             <h3 className={`text-xl font-bold flex items-center gap-2 ${isEditing ? 'text-amber-700' : 'text-slate-700'}`}>
-              {isEditing ? '✏️ Edit Mode' : <><Icons.Calc /> Kalkulator Emisi</>}
+              {isEditing ? '✏️ Edit Mode' : <><Icons.Calc /> Kalkulator</>}
             </h3>
             {isEditing && <button onClick={cancelEdit} className="text-xs font-bold bg-slate-200 px-3 py-1 rounded-full">Batal</button>}
           </div>
@@ -179,13 +177,6 @@ const HomeView = ({ activities, activityType, setActivityType, inputValue, setIn
             <motion.button whileTap={{ scale: 0.95 }} disabled={!calculatedEmission || loading} className={`w-full py-4 rounded-2xl font-bold text-lg text-white shadow-lg transition disabled:opacity-50 ${isEditing ? 'bg-amber-500 hover:bg-amber-600' : 'bg-slate-900 hover:bg-emerald-600'}`}>{loading ? "Menyimpan..." : isEditing ? "Simpan Perubahan" : "Tambahkan"}</motion.button>
           </form>
         </div>
-
-        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="bg-blue-50/50 border border-blue-100 p-6 rounded-3xl">
-          <h4 className="font-bold text-blue-800 mb-2 text-sm flex items-center gap-2">💡 Tips Cepat</h4>
-          <p className="text-xs text-blue-600 leading-relaxed">
-            Ingin mengurangi emisi? Coba gunakan transportasi umum setidaknya 2x seminggu. Efeknya besar lho untuk bumi kita! 🌍
-          </p>
-        </motion.div>
       </div>
     </motion.div>
   );
@@ -194,11 +185,10 @@ const HomeView = ({ activities, activityType, setActivityType, inputValue, setIn
 // --- HALAMAN DETAIL AKTIVITAS ---
 const ActivityDetailView = ({ activity, onBack }) => {
     return (
-        <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="max-w-2xl mx-auto">
+        <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="max-w-2xl mx-auto pb-24">
             <button onClick={onBack} className="flex items-center gap-2 text-slate-500 hover:text-slate-800 font-bold mb-6 transition-colors">
                 <Icons.ArrowLeft /> Kembali
             </button>
-            
             <div className="bg-white rounded-[2.5rem] shadow-xl border border-slate-100 overflow-hidden">
                 <div className="bg-slate-900 p-8 text-white relative overflow-hidden">
                     <div className="absolute top-0 right-0 p-8 opacity-10 scale-[2]"><Icons.Fire /></div>
@@ -206,25 +196,17 @@ const ActivityDetailView = ({ activity, onBack }) => {
                     <h2 className="text-3xl font-bold">{activity.activity}</h2>
                     <p className="mt-2 opacity-80">{new Date(activity.created_at).toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
                 </div>
-                <div className="p-8">
+                <div className="p-6 md:p-8">
                     <div className="grid grid-cols-2 gap-4 mb-8">
-                        <div className="bg-emerald-50 p-6 rounded-3xl border border-emerald-100 text-center">
+                        <div className="bg-emerald-50 p-5 rounded-3xl border border-emerald-100 text-center">
                             <p className="text-emerald-600 font-bold text-xs uppercase mb-1">Jumlah Emisi</p>
-                            <p className="text-3xl font-black text-emerald-800">{activity.amount} <span className="text-sm font-normal">kg</span></p>
+                            <p className="text-2xl font-black text-emerald-800">{activity.amount} <span className="text-sm font-normal">kg</span></p>
                         </div>
-                        <div className="bg-blue-50 p-6 rounded-3xl border border-blue-100 text-center">
+                        <div className="bg-blue-50 p-5 rounded-3xl border border-blue-100 text-center">
                             <p className="text-blue-600 font-bold text-xs uppercase mb-1">Dampak</p>
                             <p className="text-lg font-bold text-blue-800">{activity.amount > 5 ? "Tinggi ⚠️" : "Rendah ✅"}</p>
                         </div>
                     </div>
-                    
-                    <h3 className="font-bold text-slate-800 mb-2">Analisis Lingkungan</h3>
-                    <p className="text-slate-600 leading-relaxed text-sm mb-4">
-                        Aktivitas ini menyumbang sebanyak <strong>{activity.amount} kg CO₂</strong> ke atmosfer. 
-                        {activity.amount > 5 
-                            ? " Angka ini cukup tinggi. Cobalah mencari alternatif yang lebih ramah lingkungan lain kali." 
-                            : " Angka ini tergolong rendah. Terima kasih sudah menjaga bumi!"}
-                    </p>
                     <div className="bg-slate-100 p-4 rounded-xl text-xs text-slate-500 font-mono">
                         ID Transaksi: {activity.id}<br/>
                         Waktu Input: {new Date(activity.created_at).toLocaleTimeString()}
@@ -237,39 +219,34 @@ const ActivityDetailView = ({ activity, onBack }) => {
 
 // --- HALAMAN 2: HUTAN ---
 const ForestView = ({ activities }) => {
-  const safeActivities = activities || [];
-
   const monthlyEmission = useMemo(() => {
     try {
-      return safeActivities
+      return (activities || [])
         .filter(item => item && item.created_at && isThisMonth(item.created_at))
         .reduce((acc, curr) => acc + (parseFloat(curr.amount) || 0), 0);
-    } catch (err) {
-      console.error("Error menghitung emisi:", err);
-      return 0;
-    }
-  }, [safeActivities]);
+    } catch (err) { return 0; }
+  }, [activities]);
 
   const maxTrees = 20;
   const treeCount = Math.max(1, maxTrees - Math.floor(monthlyEmission));
   const trees = Array.from({ length: treeCount });
   
   return (
-    <motion.div initial="initial" animate="in" exit="out" variants={{ initial: { opacity: 0 }, in: { opacity: 1 }, out: { opacity: 0 } }} transition={{ duration: 0.4 }} className="text-center">
-      <div className="relative rounded-[3rem] shadow-2xl overflow-hidden min-h-[600px] flex flex-col justify-end border-4 border-white bg-slate-800">
+    <motion.div initial="initial" animate="in" exit="out" variants={pageVariants} className="text-center pb-24">
+      <div className="relative rounded-[3rem] shadow-2xl overflow-hidden min-h-[500px] md:min-h-[600px] flex flex-col justify-end border-4 border-white bg-slate-800">
         <div className="absolute inset-0 z-0">
-            <img src="https://images.unsplash.com/photo-1511497584788-876760111969?q=80&w=2670&auto=format&fit=crop" alt="Forest Art Background" className="w-full h-full object-cover opacity-80"/>
+            <img src="https://images.unsplash.com/photo-1511497584788-876760111969?q=80&w=2670&auto=format&fit=crop" alt="Forest Art" className="w-full h-full object-cover opacity-80"/>
             <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-black/40"></div>
         </div>
-        <div className="relative z-10 p-10 mb-auto mt-10">
-            <h2 className="text-4xl font-extrabold text-white mb-2 drop-shadow-lg filter shadow-black">🌲 Hutan Bulan Ini</h2>
+        <div className="relative z-10 p-8 md:p-10 mb-auto mt-10">
+            <h2 className="text-3xl font-extrabold text-white mb-2 drop-shadow-lg filter shadow-black">🌲 Hutan Bulan Ini</h2>
             <p className="text-white text-lg font-medium drop-shadow-md">Emisi Bulan Ini: <span className="font-bold text-yellow-300">{monthlyEmission.toFixed(2)} kg</span></p>
             <p className="text-white/80 text-sm mt-1">Hutan akan kembali lebat (20 pohon) saat bulan berganti.</p>
         </div>
-        <div className="relative z-10 px-10 pb-16 flex flex-wrap justify-center items-end gap-[-20px]">
+        <div className="relative z-10 px-6 pb-12 flex flex-wrap justify-center items-end gap-[-10px]">
           {trees.map((_, i) => (
-            <motion.div key={i} initial={{ scale: 0, y: 100 }} animate={{ scale: 1, y: 0 }} transition={{ delay: i * 0.05, type: "spring", stiffness: 200 }} className="text-emerald-300 w-20 h-20 sm:w-32 sm:h-32 filter drop-shadow-[0_10px_10px_rgba(0,0,0,0.5)] -ml-4 hover:scale-110 transition-transform duration-300">
-                <svg className="w-full h-full" fill="currentColor" stroke="none" viewBox="0 0 24 24"><path d="M12 2L2 19h20L12 2zm0 3.5l6 10.5h-12l6-10.5z" opacity=".5"/><path d="M12 5l-7 12h14l-7-12zm0 14v3h-2v-3h2z"/></svg>
+            <motion.div key={i} initial={{ scale: 0, y: 100 }} animate={{ scale: 1, y: 0 }} transition={{ delay: i * 0.05, type: "spring", stiffness: 200 }} className="text-emerald-300 w-16 h-16 sm:w-24 sm:h-24 filter drop-shadow-[0_10px_10px_rgba(0,0,0,0.5)] hover:scale-110 transition-transform">
+                <Icons.TreeSolid />
             </motion.div>
           ))}
         </div>
@@ -288,8 +265,7 @@ const LeaderboardView = ({ session, onViewUser }) => {
     const fetchGlobalLeaderboard = async () => {
       setLoadingLB(true);
       const { data, error } = await supabase.from("footprints").select("*");
-      
-      if (error) { console.error("Error fetching leaderboard:", error); setLoadingLB(false); return; }
+      if (error) { setLoadingLB(false); return; }
 
       const groupedData = {};
       data.forEach(item => {
@@ -298,10 +274,7 @@ const LeaderboardView = ({ session, onViewUser }) => {
         const displayName = item.user_name && item.user_name !== "Anonymous" ? item.user_name : "Anonymous";
         const displayAvatar = item.avatar_url ? item.avatar_url : null;
 
-        if (!groupedData[uid]) {
-          groupedData[uid] = { id: uid, name: displayName, avatar: displayAvatar, total: 0, daily: 0, monthly: 0 };
-        }
-        // Always update with the latest non-Anonymous name found
+        if (!groupedData[uid]) groupedData[uid] = { id: uid, name: displayName, avatar: displayAvatar, total: 0, daily: 0, monthly: 0 };
         if (displayName !== "Anonymous") groupedData[uid].name = displayName;
         if (displayAvatar) groupedData[uid].avatar = displayAvatar;
 
@@ -311,7 +284,7 @@ const LeaderboardView = ({ session, onViewUser }) => {
       });
 
       const result = Object.values(groupedData).map(u => ({
-        id: u.id, name: u.name, avatar: u.avatar, score: u[filter], isMe: u.id === session.user.id
+        id: u.id, name: u.name, avatar: u.avatar, score: u[filter], monthly: u.monthly, total: u.total, isMe: u.id === session.user.id
       }));
 
       result.sort((a, b) => a.score - b.score);
@@ -324,13 +297,12 @@ const LeaderboardView = ({ session, onViewUser }) => {
   const rankColors = ["bg-yellow-100 border-yellow-300", "bg-gray-100 border-gray-300", "bg-orange-100 border-orange-300", "bg-white border-slate-100"];
 
   return (
-    <motion.div initial="initial" animate="in" exit="out" variants={pageVariants} transition={pageTransition} className="max-w-3xl mx-auto">
-      <div className="bg-gradient-to-r from-violet-600 to-indigo-600 rounded-[2.5rem] p-10 text-white shadow-2xl mb-8 text-center relative overflow-hidden">
-        <h2 className="text-3xl font-extrabold mb-2 relative z-10">🏆 Peringkat Pahlawan</h2>
-        <p className="text-violet-100 relative z-10 mb-6">Semakin rendah emisimu, semakin tinggi peringkatmu!</p>
-        <div className="inline-flex bg-black/20 p-1 rounded-full relative z-10 backdrop-blur-sm">
+    <motion.div initial="initial" animate="in" exit="out" variants={pageVariants} className="max-w-3xl mx-auto pb-24">
+      <div className="bg-gradient-to-r from-violet-600 to-indigo-600 rounded-[2.5rem] p-8 text-white shadow-2xl mb-8 text-center relative overflow-hidden">
+        <h2 className="text-2xl font-extrabold mb-2 relative z-10">🏆 Peringkat Pahlawan</h2>
+        <div className="inline-flex bg-black/20 p-1 rounded-full relative z-10 backdrop-blur-sm mt-4">
             {['daily', 'monthly', 'total'].map((type) => (
-                <button key={type} onClick={() => setFilter(type)} className={`px-6 py-2 rounded-full text-sm font-bold transition-all ${filter === type ? 'bg-white text-indigo-600 shadow-md' : 'text-white/70 hover:text-white hover:bg-white/10'}`}>
+                <button key={type} onClick={() => setFilter(type)} className={`px-4 py-2 rounded-full text-xs font-bold transition-all ${filter === type ? 'bg-white text-indigo-600 shadow-md' : 'text-white/70 hover:text-white hover:bg-white/10'}`}>
                     {type === 'daily' ? 'Harian' : type === 'monthly' ? 'Bulanan' : 'Total'}
                 </button>
             ))}
@@ -339,26 +311,25 @@ const LeaderboardView = ({ session, onViewUser }) => {
 
       <div className="space-y-4">
         {loadingLB ? <div className="text-center py-10 text-slate-400">Memuat peringkat...</div> : 
-         leaderboardData.length === 0 ? <div className="text-center py-10 text-slate-400">Belum ada data peringkat.</div> : 
          leaderboardData.map((user, index) => {
             const colorClass = rankColors[index] || rankColors[3]; 
             return (
             <motion.div 
                 layout key={user.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
                 onClick={() => onViewUser(user)}
-                className={`flex items-center justify-between p-5 rounded-2xl border-2 ${colorClass} shadow-sm cursor-pointer hover:scale-[1.02] transition-transform ${user.isMe ? 'ring-2 ring-indigo-500 ring-offset-2' : ''}`}
+                className={`flex items-center justify-between p-4 rounded-2xl border-2 ${colorClass} shadow-sm cursor-pointer hover:scale-[1.02] transition-transform ${user.isMe ? 'ring-2 ring-indigo-500 ring-offset-2' : ''}`}
             >
-                <div className="flex items-center gap-4">
-                <div className="font-black text-xl w-8 text-center text-slate-400">{index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : index + 1}</div>
-                <div className="w-12 h-12 flex-shrink-0 flex items-center justify-center rounded-full bg-white overflow-hidden border-2 border-white shadow-sm">
-                    {user.avatar ? <img src={user.avatar} alt="avatar" className="w-full h-full object-cover" /> : <span className="text-2xl">👤</span>}
+                <div className="flex items-center gap-3">
+                    <div className="font-black text-lg w-6 text-center text-slate-400">{index + 1}</div>
+                    <div className="w-10 h-10 flex-shrink-0 flex items-center justify-center rounded-full bg-white border-2 border-white overflow-hidden">
+                        {user.avatar ? <img src={user.avatar} alt="avatar" className="w-full h-full object-cover" /> : <span className="text-xl">👤</span>}
+                    </div>
+                    <div className="flex flex-col">
+                        <span className="font-bold text-sm text-slate-700 truncate max-w-[100px]">{user.name}</span>
+                        {user.isMe && <span className="text-[9px] font-bold text-indigo-500 bg-indigo-50 px-2 rounded-full w-fit">It's You!</span>}
+                    </div>
                 </div>
-                <div className="flex flex-col">
-                    <span className="font-bold text-lg text-slate-700">{user.name}</span>
-                    {user.isMe && <span className="text-xs font-bold text-indigo-500 bg-indigo-50 px-2 py-0.5 rounded-full w-fit">It's You!</span>}
-                </div>
-                </div>
-                <div className="font-mono font-bold text-xl text-slate-700">{user.score.toFixed(2)} <span className="text-sm font-normal opacity-70">kg</span></div>
+                <div className="font-mono font-bold text-lg text-slate-700">{user.score.toFixed(1)} <span className="text-xs font-normal opacity-70">kg</span></div>
             </motion.div>
             )})
         }
@@ -367,29 +338,36 @@ const LeaderboardView = ({ session, onViewUser }) => {
   );
 };
 
-// --- HALAMAN DETAIL USER ---
+// --- HALAMAN DETAIL USER (KETIKA KLIK LEADERBOARD) ---
 const UserDetailView = ({ user, onBack }) => {
     return (
-        <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="max-w-md mx-auto">
+        <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="max-w-md mx-auto pb-24">
             <button onClick={onBack} className="flex items-center gap-2 text-slate-500 hover:text-slate-800 font-bold mb-6 transition-colors">
                 <Icons.ArrowLeft /> Kembali
             </button>
-            
-            <div className="bg-white rounded-[3rem] shadow-2xl p-10 text-center border border-slate-100">
-                <div className="w-32 h-32 mx-auto bg-slate-100 rounded-full mb-6 flex items-center justify-center overflow-hidden border-4 border-emerald-100 shadow-lg">
-                    {user.avatar ? <img src={user.avatar} alt="avatar" className="w-full h-full object-cover" /> : <span className="text-6xl">👤</span>}
+            <div className="bg-white rounded-[3rem] shadow-2xl p-8 text-center border border-slate-100">
+                <div className="w-28 h-28 mx-auto bg-slate-100 rounded-full mb-4 flex items-center justify-center overflow-hidden border-4 border-emerald-100 shadow-lg">
+                    {user.avatar ? <img src={user.avatar} alt="avatar" className="w-full h-full object-cover" /> : <span className="text-5xl">👤</span>}
                 </div>
                 <h2 className="text-2xl font-black text-slate-800">{user.name}</h2>
-                <span className="inline-block bg-emerald-100 text-emerald-700 px-4 py-1 rounded-full text-xs font-bold mt-2">Pejuang Lingkungan</span>
                 
-                <div className="mt-8 grid grid-cols-2 gap-4">
-                    <div className="bg-slate-50 p-4 rounded-2xl">
-                        <p className="text-xs text-slate-400 font-bold uppercase">Total Emisi</p>
-                        <p className="text-2xl font-black text-slate-800">{user.score.toFixed(1)}</p>
+                {/* DETAIL DESKRIPSI BARU */}
+                <div className="mt-6 bg-slate-50 p-4 rounded-2xl text-sm text-slate-600 leading-relaxed border border-slate-100">
+                    <p>
+                       Halo! <strong>{user.name}</strong> adalah salah satu pahlawan bumi. 
+                       Pada bulan ini, ia telah menghasilkan jejak karbon sebesar <span className="font-bold text-emerald-600">{user.monthly.toFixed(2)} kg</span>.
+                       Secara total, kontribusinya tercatat sebesar <strong>{user.total.toFixed(2)} kg</strong>.
+                    </p>
+                </div>
+
+                <div className="mt-6 grid grid-cols-2 gap-4">
+                    <div className="bg-blue-50 p-4 rounded-2xl border border-blue-100">
+                        <p className="text-xs text-blue-400 font-bold uppercase">Total Skor</p>
+                        <p className="text-xl font-black text-blue-800">{user.total.toFixed(1)}</p>
                     </div>
-                    <div className="bg-slate-50 p-4 rounded-2xl">
-                        <p className="text-xs text-slate-400 font-bold uppercase">Status</p>
-                        <p className="text-2xl font-black text-slate-800">{user.score < 10 ? "🌱" : "🪵"}</p>
+                    <div className="bg-emerald-50 p-4 rounded-2xl border border-emerald-100">
+                        <p className="text-xs text-emerald-400 font-bold uppercase">Status</p>
+                        <p className="text-xl font-black text-emerald-800">{user.total < 10 ? "🌱 Aman" : "⚠️ Tinggi"}</p>
                     </div>
                 </div>
             </div>
@@ -397,14 +375,15 @@ const UserDetailView = ({ user, onBack }) => {
     )
 }
 
-// --- HALAMAN 4: PROFIL ---
-const ProfileView = ({ session, totalEmission }) => {
+// --- HALAMAN 4: PROFIL (DENGAN TOMBOL LOGOUT) ---
+const ProfileView = ({ session, totalEmission, onLogout }) => {
   const userMetadata = session.user.user_metadata || {};
   const [isEditMode, setIsEditMode] = useState(false);
   const [username, setUsername] = useState(userMetadata.user_name || userMetadata.full_name || 'Anonymous');
   const [avatarUrl, setAvatarUrl] = useState(userMetadata.avatar_url || null);
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const joinDate = new Date(session.user.created_at).toLocaleDateString('id-ID', { month: 'long', year: 'numeric' });
 
   const uploadAvatar = async (event) => {
     try {
@@ -422,44 +401,21 @@ const ProfileView = ({ session, totalEmission }) => {
   const handleUpdateProfile = async (e) => {
     e.preventDefault();
     setLoading(true);
-    
-    // 1. UPDATE AUTH METADATA
-    const { error: authError } = await supabase.auth.updateUser({
-      data: { user_name: username, avatar_url: avatarUrl }
-    });
-
-    if (authError) {
-        alert("Gagal update auth: " + authError.message);
-        setLoading(false);
-        return;
-    }
-
-    // 2. UPDATE FOOTPRINTS DATABASE (Agar leaderboard berubah untuk data lama)
-    const { error: dbError } = await supabase
-        .from('footprints')
-        .update({ user_name: username, avatar_url: avatarUrl })
-        .eq('user_id', session.user.id);
-
+    const { error: authError } = await supabase.auth.updateUser({ data: { user_name: username, avatar_url: avatarUrl } });
+    if (authError) { alert("Gagal update auth: " + authError.message); setLoading(false); return; }
+    const { error: dbError } = await supabase.from('footprints').update({ user_name: username, avatar_url: avatarUrl }).eq('user_id', session.user.id);
     setLoading(false);
-
-    if (dbError) {
-        console.error("Gagal sinkronisasi data footprints:", dbError);
-        alert("Profil terupdate tapi data lama mungkin belum berubah.");
-    } else {
-        alert("Profil & Data Peringkat berhasil diperbarui!");
-        setIsEditMode(false);
-        window.location.reload(); 
-    }
+    if (dbError) { console.error("Gagal sinkronisasi data footprints:", dbError); alert("Profil terupdate tapi data lama mungkin belum berubah."); } else { alert("Profil & Data Peringkat berhasil diperbarui!"); setIsEditMode(false); window.location.reload(); }
   };
 
   return (
-    <motion.div initial="initial" animate="in" exit="out" variants={pageVariants} transition={pageTransition} className="max-w-2xl mx-auto">
-      <div className="bg-white rounded-[3rem] shadow-2xl p-10 border border-slate-100 relative overflow-hidden">
+    <motion.div initial="initial" animate="in" exit="out" variants={pageVariants} className="max-w-2xl mx-auto pb-24">
+      <div className="bg-white rounded-[3rem] shadow-xl p-8 border border-slate-100 relative overflow-hidden">
         <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-r from-emerald-400 to-teal-400"></div>
         <div className="relative z-10 flex flex-col items-center mt-12">
           <div className="relative group">
-            <div className="w-32 h-32 bg-white p-1 rounded-full shadow-lg mb-4 flex items-center justify-center overflow-hidden border-4 border-white">
-              {avatarUrl ? <img src={avatarUrl} alt="Avatar" className="w-full h-full object-cover rounded-full" /> : <span className="text-5xl">😎</span>}
+            <div className="w-28 h-28 mx-auto bg-white p-1 rounded-full shadow-lg mb-4 flex items-center justify-center overflow-hidden border-4 border-white">
+              {avatarUrl ? <img src={avatarUrl} alt="Avatar" className="w-full h-full object-cover rounded-full" /> : <span className="text-4xl">😎</span>}
             </div>
             {isEditMode && (
               <label className="absolute bottom-4 right-0 bg-slate-800 text-white p-3 rounded-full cursor-pointer hover:bg-slate-700 shadow-md transition-all">
@@ -478,21 +434,33 @@ const ProfileView = ({ session, totalEmission }) => {
             </form>
           ) : (
             <>
-              <h2 className="text-3xl font-black text-slate-800 mt-2">{username}</h2>
-              <span className="bg-emerald-100 text-emerald-700 px-4 py-1.5 rounded-full text-sm font-bold mt-3 tracking-wide">Pahlawan Lingkungan</span>
-              <button onClick={() => setIsEditMode(true)} className="mt-6 text-sm text-blue-600 hover:text-blue-800 font-bold flex items-center gap-2 bg-blue-50 px-5 py-2.5 rounded-full transition"><Icons.Pencil /> Edit Profil</button>
+              <h2 className="text-2xl font-black text-slate-800 mt-2">{username}</h2>
+              <span className="bg-emerald-100 text-emerald-700 px-4 py-1.5 rounded-full text-xs font-bold mt-3 tracking-wide">Pahlawan Lingkungan</span>
+              <button onClick={() => setIsEditMode(true)} className="mt-6 text-xs text-blue-600 hover:text-blue-800 font-bold flex items-center justify-center gap-2 bg-blue-50 px-5 py-2.5 rounded-full transition"><Icons.Pencil /> Edit Profil</button>
             </>
           )}
         </div>
-        <div className="grid grid-cols-2 gap-4 mt-12">
-          <div className="bg-slate-50 p-6 rounded-3xl text-center border-2 border-slate-100">
-            <p className="text-slate-400 text-xs font-bold uppercase mb-2">Total Emisi</p>
-            <p className="text-4xl font-black text-slate-800">{totalEmission} <span className="text-sm text-slate-500 font-medium">kg</span></p>
-          </div>
-          <div className="bg-slate-50 p-6 rounded-3xl text-center border-2 border-slate-100">
-            <p className="text-slate-400 text-xs font-bold uppercase mb-2">Email</p>
-            <p className="text-sm font-bold text-slate-700 break-all">{session.user.email}</p>
-          </div>
+
+        {/* DESKRIPSI PROFIL BARU */}
+        <div className="mt-10 space-y-4">
+            <div className="bg-slate-50 p-5 rounded-3xl border border-slate-100">
+                <h4 className="font-bold text-slate-700 mb-2 flex items-center gap-2">📊 Ringkasan Kamu</h4>
+                <p className="text-sm text-slate-600 leading-relaxed">
+                    Halo <strong>{username}</strong>! Kamu bergabung sejak <strong>{joinDate}</strong>. 
+                    Sejauh ini, kamu telah mencatat emisi sebesar <span className="font-bold text-emerald-600">{totalEmission} kg</span>.
+                    Terus kurangi jejak karbonmu! 🌱
+                </p>
+            </div>
+            <div className="bg-slate-50 p-5 rounded-3xl border border-slate-100">
+                <p className="text-slate-400 text-xs font-bold uppercase mb-1">Email Terdaftar</p>
+                <p className="text-sm font-bold text-slate-700 break-all">{session.user.email}</p>
+            </div>
+        </div>
+
+        <div className="mt-10 pt-6 border-t border-slate-100">
+            <button onClick={onLogout} className="w-full bg-red-50 text-red-500 hover:bg-red-100 hover:text-red-600 font-bold py-4 rounded-2xl flex items-center justify-center gap-2 transition-all">
+                <Icons.LogOut /> Keluar
+            </button>
         </div>
       </div>
     </motion.div>
@@ -501,46 +469,54 @@ const ProfileView = ({ session, totalEmission }) => {
 
 // --- HALAMAN 5: TENTANG APLIKASI (About) ---
 const AboutView = () => (
-    <motion.div initial="initial" animate="in" exit="out" variants={pageVariants} transition={pageTransition} className="max-w-2xl mx-auto">
-        <div className="bg-white rounded-[2.5rem] shadow-xl p-10 border border-slate-100 text-center">
+    <motion.div initial="initial" animate="in" exit="out" variants={pageVariants} className="max-w-2xl mx-auto pb-24">
+        <div className="bg-white rounded-[2.5rem] shadow-xl p-8 border border-slate-100 text-center">
             <div className="w-20 h-20 bg-gradient-to-tr from-emerald-500 to-teal-500 rounded-3xl flex items-center justify-center text-white mx-auto mb-6 shadow-lg shadow-emerald-200">
                 <Icons.Leaf />
             </div>
-            <h2 className="text-3xl font-black text-slate-800 mb-2">EcoCarbon</h2>
-            <p className="text-slate-500 font-medium">Versi 1.0.0 (Tugas Akhir PWA)</p>
+            <h2 className="text-2xl font-black text-slate-800 mb-2">EcoCarbon</h2>
+            <p className="text-slate-500 font-medium text-sm">Versi 1.0.0 (Tugas Akhir PWA)</p>
             
             <div className="mt-8 text-left space-y-4">
-                <div className="bg-slate-50 p-5 rounded-2xl">
+                <div className="bg-slate-50 p-5 rounded-2xl border border-slate-100">
                     <h3 className="font-bold text-slate-800 mb-2">Tentang Aplikasi</h3>
                     <p className="text-sm text-slate-600 leading-relaxed">
-                        EcoCarbon adalah aplikasi pelacak jejak karbon pribadi berbasis Progressive Web Apps (PWA). 
-                        Aplikasi ini membantu pengguna menghitung, memantau, dan mengurangi emisi karbon harian mereka 
-                        melalui gamifikasi hutan virtual dan kompetisi peringkat.
+                        EcoCarbon adalah aplikasi pelacak jejak karbon pribadi berbasis PWA. Aplikasi ini membantu pengguna menghitung dan mengurangi emisi karbon harian melalui gamifikasi.
                     </p>
                 </div>
-                <div className="bg-slate-50 p-5 rounded-2xl">
+                <div className="bg-slate-50 p-5 rounded-2xl border border-slate-100">
                     <h3 className="font-bold text-slate-800 mb-2">Pengembang</h3>
                     <p className="text-sm text-slate-600">
-                        Nama: <strong>Rabelva Evan Ligar (NIM: 21120123140161)</strong><br/>
+                        Nama: <strong>Rabelva Evan Ligar (21120123140161)</strong><br/>
                         Teknologi: React, Vite, Tailwind CSS, Supabase
                     </p>
                 </div>
             </div>
-            
             <p className="mt-10 text-xs text-slate-400">© 2025 EcoCarbon Project</p>
         </div>
     </motion.div>
 );
 
 // ==========================================
-// 4. MAIN CONTROLLER (DASHBOARD)
+// 4. MAIN CONTROLLER
 // ==========================================
 export default function Dashboard({ session }) {
   const [currentPage, setCurrentPage] = useState("home");
-  // State untuk Detail Views
+  const [isOffline, setIsOffline] = useState(!navigator.onLine);
+
+  useEffect(() => {
+    const handleOnline = () => setIsOffline(false);
+    const handleOffline = () => setIsOffline(true);
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, []);
+
   const [selectedActivity, setSelectedActivity] = useState(null);
   const [selectedUser, setSelectedUser] = useState(null);
-
   const [activities, setActivities] = useState([]);
   const [totalEmission, setTotalEmission] = useState(0);
   const [activityType, setActivityType] = useState("motor");
@@ -601,18 +577,25 @@ export default function Dashboard({ session }) {
   const cancelEdit = () => { setIsEditing(false); setEditId(null); setInputValue(""); setCalculatedEmission(""); setActivityType("motor"); };
   const handleLogout = async () => { await supabase.auth.signOut(); };
 
-  // Handlers untuk Navigasi Detail
   const handleViewActivity = (item) => { setSelectedActivity(item); setCurrentPage('activity-detail'); };
   const handleViewUser = (user) => { setSelectedUser(user); setCurrentPage('user-detail'); };
 
   return (
-    <div className="min-h-screen bg-slate-50 relative font-sans text-slate-800 pb-20 overflow-x-hidden">
+    <div className="min-h-screen bg-slate-50 relative font-sans text-slate-800 pb-32 overflow-x-hidden">
+      
+      {isOffline && (
+        <div className="bg-red-500 text-white text-center text-xs font-bold py-2 px-4 fixed top-0 left-0 w-full z-[100] animate-pulse shadow-md">
+          📡 Anda sedang Offline. Beberapa fitur mungkin terbatas.
+        </div>
+      )}
+
       <div className="fixed top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
          <motion.div animate={{ x: [0, 20, 0], y: [0, -20, 0] }} transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }} className="absolute top-[-10%] right-[-5%] w-[600px] h-[600px] bg-teal-200/30 rounded-full blur-[120px]"></motion.div>
          <motion.div animate={{ x: [0, -30, 0], y: [0, 30, 0] }} transition={{ duration: 10, repeat: Infinity, ease: "easeInOut", delay: 1 }} className="absolute bottom-[-10%] left-[-10%] w-[500px] h-[500px] bg-emerald-200/30 rounded-full blur-[150px]"></motion.div>
       </div>
 
-      <nav className="sticky top-0 z-50 bg-white/70 backdrop-blur-xl border-b border-white/40 shadow-sm transition-all">
+      {/* TOP NAV: DESKTOP ONLY */}
+      <nav className="sticky top-0 z-50 bg-white/70 backdrop-blur-xl border-b border-white/40 shadow-sm transition-all hidden md:block">
         <div className="max-w-6xl mx-auto px-6 py-4 flex flex-col md:flex-row gap-4 justify-between items-center">
           <div className="flex items-center gap-2">
             <div className="bg-gradient-to-tr from-emerald-500 to-teal-500 p-2 rounded-xl text-white shadow-lg shadow-emerald-500/30"><Icons.Leaf /></div>
@@ -622,24 +605,64 @@ export default function Dashboard({ session }) {
             {[{ id: 'home', label: 'Beranda' }, { id: 'forest', label: 'Hutan' }, { id: 'leaderboard', label: 'Peringkat' }, { id: 'profile', label: 'Profil' }, { id: 'about', label: 'Tentang' }]
             .map(menu => (<button key={menu.id} onClick={() => setCurrentPage(menu.id)} className={`px-5 py-2 rounded-full text-sm font-bold transition-all whitespace-nowrap ${currentPage === menu.id ? 'bg-white text-emerald-600 shadow-sm scale-105' : 'text-slate-500 hover:text-slate-800'}`}>{menu.label}</button>))}
           </div>
-          <button onClick={handleLogout} className="hidden md:flex items-center gap-2 text-sm font-bold text-slate-500 hover:text-red-500 bg-slate-100 hover:bg-red-50 px-4 py-2 rounded-full transition-all"><Icons.LogOut /> Keluar</button>
+          <button onClick={handleLogout} className="flex items-center gap-2 text-sm font-bold text-slate-500 hover:text-red-500 bg-slate-100 hover:bg-red-50 px-4 py-2 rounded-full transition-all"><Icons.LogOut /> Keluar</button>
         </div>
       </nav>
 
-      <main className="relative z-10 max-w-6xl mx-auto px-6 mt-10">
+      {/* MOBILE HEADER */}
+      <div className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-100 px-6 py-4 flex justify-center items-center md:hidden shadow-sm">
+         <div className="flex items-center gap-2">
+            <div className="bg-emerald-500 p-1.5 rounded-lg text-white shadow-md"><Icons.Leaf /></div>
+            <span className="text-lg font-extrabold text-slate-800">EcoCarbon</span>
+         </div>
+      </div>
+
+      <main className="relative z-10 max-w-6xl mx-auto px-4 md:px-6 mt-6 md:mt-10">
         <AnimatePresence mode="wait">
-          {/* Main Pages */}
           {currentPage === "home" && <HomeView key="home" activities={activities} totalEmission={totalEmission} activityType={activityType} setActivityType={setActivityType} inputValue={inputValue} setInputValue={setInputValue} calculatedEmission={calculatedEmission} loading={loading} handleSubmit={handleSubmit} handleEdit={handleEdit} handleDelete={handleDelete} isEditing={isEditing} cancelEdit={cancelEdit} onViewDetail={handleViewActivity} />}
           {currentPage === "forest" && <ForestView key="forest" activities={activities} />}
           {currentPage === "leaderboard" && <LeaderboardView key="leaderboard" session={session} onViewUser={handleViewUser} />}
-          {currentPage === "profile" && <ProfileView key="profile" session={session} totalEmission={totalEmission} />}
+          {currentPage === "profile" && <ProfileView key="profile" session={session} totalEmission={totalEmission} onLogout={handleLogout} />}
           {currentPage === "about" && <AboutView key="about" />}
-
-          {/* Detail Pages (Hidden from Nav) */}
           {currentPage === "activity-detail" && selectedActivity && <ActivityDetailView key="detail-act" activity={selectedActivity} onBack={() => setCurrentPage('home')} />}
           {currentPage === "user-detail" && selectedUser && <UserDetailView key="detail-user" user={selectedUser} onBack={() => setCurrentPage('leaderboard')} />}
         </AnimatePresence>
       </main>
+
+      {/* BOTTOM NAV BAR (ESTETIK) */}
+      <div className="fixed bottom-0 left-0 w-full md:hidden z-50">
+        <div className="mx-4 mb-4 bg-white/90 backdrop-blur-lg border border-white/50 shadow-[0_-5px_20px_rgba(0,0,0,0.05)] rounded-2xl p-2 flex justify-around items-center">
+            {[
+              { id: 'home', label: 'Home', icon: Icons.Leaf },
+              { id: 'forest', label: 'Hutan', icon: Icons.Tree },
+              { id: 'leaderboard', label: 'Top', icon: Icons.Fire },
+              { id: 'profile', label: 'Profil', icon: Icons.User },
+              { id: 'about', label: 'Info', icon: Icons.Info }
+            ].map((menu) => {
+                const isActive = currentPage === menu.id;
+                return (
+                <button 
+                    key={menu.id} 
+                    onClick={() => setCurrentPage(menu.id)} 
+                    className="relative flex flex-col items-center justify-center w-full h-12"
+                >
+                    {isActive && (
+                        <motion.div 
+                            layoutId="nav-bg" 
+                            className="absolute inset-0 bg-emerald-100 rounded-xl -z-10" 
+                            initial={false} 
+                            transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                        />
+                    )}
+                    <div className={`transition-all duration-300 ${isActive ? 'text-emerald-600 scale-110 -translate-y-1' : 'text-slate-400'}`}>
+                        <menu.icon />
+                    </div>
+                    {isActive && <span className="text-[9px] font-bold text-emerald-700 mt-0.5">{menu.label}</span>}
+                </button>
+            )})}
+        </div>
+      </div>
+
     </div>
   );
 }
