@@ -25,7 +25,6 @@ export default defineConfig({
         start_url: '/',
         icons: [
           {
-            // PERBAIKAN UTAMA: MENGGUNAKAN NAMA FILE BARU
             src: '/icons/icon-192.png', 
             sizes: '192x192',
             type: 'image/png',
@@ -41,7 +40,6 @@ export default defineConfig({
       },
       
       workbox: {
-        // Mencegah layar putih offline & error MIME type
         navigateFallback: '/index.html',
         navigateFallbackDenylist: [/^\/api\//, /\.[a-z]+$/],
         globPatterns: ['**/*.{js,css,html,ico,png,svg,woff,woff2}'],

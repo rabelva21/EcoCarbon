@@ -3,7 +3,9 @@ import { supabase } from "../supabaseClient";
 import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
 
-// --- ASET IKON (SAMA SEPERTI SEBELUMNYA) ---
+// ==========================================
+// 1. KOLEKSI ASET & IKON
+// ==========================================
 const Icons = {
   Leaf: () => <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 3v4M3 5v4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path></svg>,
   Tree: () => <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>,
@@ -23,6 +25,9 @@ const Icons = {
   User: () => <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>,
 };
 
+// ==========================================
+// 2. DATA & CONFIG
+// ==========================================
 const EMISSION_FACTORS = {
   "motor": { label: "Naik Motor", unit: "km", factor: 0.113 },
   "mobil": { label: "Naik Mobil (Bensin)", unit: "km", factor: 0.192 },
@@ -41,16 +46,24 @@ const isToday = (dateString) => {
   if (!dateString) return false;
   const date = new Date(dateString);
   const today = new Date();
-  return date.getDate() === today.getDate() && date.getMonth() === today.getMonth() && date.getFullYear() === today.getFullYear();
+  return date.getDate() === today.getDate() &&
+         date.getMonth() === today.getMonth() &&
+         date.getFullYear() === today.getFullYear();
 };
+
 const isThisMonth = (dateString) => {
   if (!dateString) return false;
   const date = new Date(dateString);
   const today = new Date();
-  return date.getMonth() === today.getMonth() && date.getFullYear() === today.getFullYear();
+  return date.getMonth() === today.getMonth() &&
+         date.getFullYear() === today.getFullYear();
 };
 
-// --- SUB COMPONENTS ---
+// ==========================================
+// 3. SUB-COMPONENTS
+// ==========================================
+
+// --- HALAMAN 1: BERANDA ---
 const HomeView = ({ activities, activityType, setActivityType, inputValue, setInputValue, calculatedEmission, loading, handleSubmit, handleEdit, handleDelete, isEditing, cancelEdit, onViewDetail }) => {
   const stats = useMemo(() => {
     let daily = 0; let monthly = 0; let total = 0;
@@ -86,6 +99,7 @@ const HomeView = ({ activities, activityType, setActivityType, inputValue, setIn
                 </div>
             </div>
         </div>
+
         <div>
           <h3 className="text-xl font-bold text-slate-800 mb-4 flex items-center gap-2">📝 Riwayat Aktivitas</h3>
           {activities.length === 0 ? (
@@ -111,11 +125,16 @@ const HomeView = ({ activities, activityType, setActivityType, inputValue, setIn
                       <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">{new Date(item.created_at).toLocaleDateString()}</p>
                     </div>
                   </div>
+                  
                   <div className="flex items-center justify-between w-full sm:w-auto gap-4 pl-0 sm:pl-4 sm:border-l border-slate-100">
                     <span className="font-extrabold text-xl text-slate-700">{item.amount} <span className="text-sm font-normal text-slate-400">kg</span></span>
                     <div className="flex gap-2">
-                      <button onClick={(e) => { e.stopPropagation(); handleEdit(item); }} className="p-2 bg-amber-50 text-amber-500 hover:bg-amber-100 rounded-xl transition-colors"><Icons.Pencil /></button>
-                      <button onClick={(e) => { e.stopPropagation(); handleDelete(item.id); }} className="p-2 bg-red-50 text-red-500 hover:bg-red-100 rounded-xl transition-colors"><Icons.Trash /></button>
+                      <button onClick={(e) => { e.stopPropagation(); handleEdit(item); }} className="px-3 py-2 bg-amber-50 text-amber-500 hover:bg-amber-100 rounded-xl text-sm font-bold flex items-center gap-1 transition-colors">
+                        <Icons.Pencil /> Edit
+                      </button>
+                      <button onClick={(e) => { e.stopPropagation(); handleDelete(item.id); }} className="px-3 py-2 bg-red-50 text-red-500 hover:bg-red-100 rounded-xl text-sm font-bold flex items-center gap-1 transition-colors">
+                        <Icons.Trash /> Hapus
+                      </button>
                     </div>
                   </div>
                 </motion.div>
@@ -125,6 +144,7 @@ const HomeView = ({ activities, activityType, setActivityType, inputValue, setIn
           )}
         </div>
       </div>
+
       <div className="lg:col-span-1 space-y-6">
         <div className={`p-8 rounded-[2.5rem] border shadow-2xl transition-all duration-500 ${isEditing ? 'bg-amber-50 border-amber-200' : 'bg-white border-white/50'}`}>
           <div className="flex items-center justify-between mb-6">
@@ -146,6 +166,12 @@ const HomeView = ({ activities, activityType, setActivityType, inputValue, setIn
               <label className="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">{activityType === 'manual' ? 'Emisi (kg)' : `Jumlah (${EMISSION_FACTORS[activityType].unit})`}</label>
               <input type="number" placeholder="0" className="w-full px-5 py-4 rounded-2xl bg-slate-50 border-2 border-transparent focus:bg-white focus:border-emerald-400 outline-none font-bold text-xl text-slate-800" value={inputValue} onChange={(e) => setInputValue(e.target.value)} />
             </div>
+            {!isEditing && activityType !== 'manual' && (
+              <div className="bg-emerald-50 p-4 rounded-2xl flex justify-between items-center border border-emerald-100">
+                <span className="text-sm font-bold text-emerald-600">Estimasi:</span>
+                <span className="text-2xl font-black text-emerald-700">{calculatedEmission || 0} <span className="text-sm font-medium">kg CO₂</span></span>
+              </div>
+            )}
             <motion.button whileTap={{ scale: 0.95 }} disabled={!calculatedEmission || loading} className={`w-full py-4 rounded-2xl font-bold text-lg text-white shadow-lg transition disabled:opacity-50 ${isEditing ? 'bg-amber-500 hover:bg-amber-600' : 'bg-slate-900 hover:bg-emerald-600'}`}>{loading ? "Menyimpan..." : isEditing ? "Simpan Perubahan" : "Tambahkan"}</motion.button>
           </form>
         </div>
@@ -161,7 +187,7 @@ const ActivityDetailView = ({ activity, onBack }) => {
                 <Icons.ArrowLeft /> Kembali
             </button>
             <div className="bg-white rounded-[2.5rem] shadow-xl border border-slate-100 overflow-hidden">
-                <div className="bg-slate-900 p-8 text-white relative overflow-hidden">
+                <div className="bg-slate-900 p-8 text-white relative">
                     <div className="absolute top-0 right-0 p-8 opacity-10 scale-[2]"><Icons.Fire /></div>
                     <p className="text-slate-400 font-bold uppercase text-xs mb-2">Detail Aktivitas</p>
                     <h2 className="text-3xl font-bold">{activity.activity}</h2>
@@ -179,6 +205,7 @@ const ActivityDetailView = ({ activity, onBack }) => {
     )
 }
 
+// --- HALAMAN 2: HUTAN ---
 const ForestView = ({ activities }) => {
   const monthlyEmission = useMemo(() => {
     try {
@@ -189,6 +216,7 @@ const ForestView = ({ activities }) => {
   return (
     <motion.div initial="initial" animate="in" exit="out" variants={pageVariants} className="text-center pb-32">
       <div className="relative rounded-[3rem] shadow-2xl overflow-hidden min-h-[500px] md:min-h-[600px] flex flex-col justify-end border-4 border-white bg-slate-800">
+        {/* BACKGROUND HUTAN */}
         <div className="absolute inset-0 z-0">
             <img src="https://images.unsplash.com/photo-1511497584788-876760111969?q=80&w=2670&auto=format&fit=crop" alt="Forest Art" className="w-full h-full object-cover opacity-80"/>
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-slate-800"></div>
@@ -278,11 +306,11 @@ const UserDetailView = ({ user, onBack }) => (
 const ProfileView = ({ session, totalEmission, onLogout }) => {
   const [username, setUsername] = useState(session.user.user_metadata.user_name || 'Anonymous');
   const [avatarUrl, setAvatarUrl] = useState(session.user.user_metadata.avatar_url || null);
-  const [isEdit, setIsEdit] = useState(false); const [loading, setLoading] = useState(false);
-  const [uploading, setUploading] = useState(false); // TAMBAHAN: State uploading untuk foto
+  const [isEdit, setIsEdit] = useState(false); 
+  const [loading, setLoading] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const joinDate = new Date(session.user.created_at).toLocaleDateString('id-ID', { month: 'long', year: 'numeric' });
 
-  // --- FITUR UPLOAD FOTO (KEMBALI ADA) ---
   const uploadAvatar = async (event) => {
     try {
       setUploading(true);
@@ -312,7 +340,6 @@ const ProfileView = ({ session, totalEmission, onLogout }) => {
                 <div className="w-28 h-28 bg-white p-1 rounded-full shadow-lg mb-4 overflow-hidden border-4 border-white">
                     {avatarUrl ? <img src={avatarUrl} className="w-full h-full object-cover rounded-full"/> : <span className="text-5xl leading-[6rem]">😎</span>}
                 </div>
-                {/* TOMBOL UPLOAD (KEMBALI ADA) */}
                 {isEdit && (
                   <label className="absolute bottom-4 right-0 bg-slate-800 text-white p-3 rounded-full cursor-pointer hover:bg-slate-700 shadow-md transition-all">
                     {uploading ? <span className="block w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></span> : <Icons.Pencil />}
@@ -375,15 +402,6 @@ export default function Dashboard({ session }) {
   const [currentPage, setCurrentPage] = useState("home");
   const [isOffline, setIsOffline] = useState(!navigator.onLine);
 
-  // DETEKSI MOBILE UNTUK TAMPILAN NAVBAR
-  const [isMobile, setIsMobile] = useState(false);
-  useEffect(() => {
-    const handleResize = () => setIsMobile(window.innerWidth < 768);
-    handleResize(); // Cek saat pertama load
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
   useEffect(() => {
     const handleStatus = () => setIsOffline(!navigator.onLine);
     window.addEventListener('online', handleStatus);
@@ -437,24 +455,20 @@ export default function Dashboard({ session }) {
       {isOffline && <div className="bg-red-500 text-white text-center text-xs font-bold py-2 fixed top-0 w-full z-[100]">📡 Offline Mode</div>}
       
       {/* HEADER DESKTOP */}
-      {!isMobile && (
-        <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-white/50 px-6 py-4 flex justify-between items-center">
-            <div className="flex items-center gap-2 font-black text-xl text-emerald-600"><Icons.Leaf /> EcoCarbon</div>
-            <div className="flex gap-2">
-                {['home', 'forest', 'leaderboard', 'profile', 'about'].map(id => (
-                    <button key={id} onClick={() => setCurrentPage(id)} className={`px-4 py-1 rounded-full text-sm font-bold capitalize ${currentPage === id ? 'bg-emerald-100 text-emerald-700' : 'text-slate-500'}`}>{id}</button>
-                ))}
-            </div>
-            <button onClick={handleLogout} className="flex items-center gap-2 text-sm font-bold text-slate-500 hover:text-red-500 bg-slate-100 hover:bg-red-50 px-4 py-2 rounded-full transition-all"><Icons.LogOut /> Keluar</button>
-        </nav>
-      )}
+      <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-white/50 px-6 py-4 hidden md:flex justify-between items-center">
+        <div className="flex items-center gap-2 font-black text-xl text-emerald-600"><Icons.Leaf /> EcoCarbon</div>
+        <div className="flex gap-2">
+            {['home', 'forest', 'leaderboard', 'profile', 'about'].map(id => (
+                <button key={id} onClick={() => setCurrentPage(id)} className={`px-4 py-1 rounded-full text-sm font-bold capitalize ${currentPage === id ? 'bg-emerald-100 text-emerald-700' : 'text-slate-500'}`}>{id}</button>
+            ))}
+        </div>
+        <button onClick={handleLogout} className="flex items-center gap-2 text-sm font-bold text-slate-500 hover:text-red-500 bg-slate-100 hover:bg-red-50 px-4 py-2 rounded-full transition-all"><Icons.LogOut /> Keluar</button>
+      </nav>
 
       {/* MOBILE HEADER */}
-      {isMobile && (
-        <div className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-slate-100 px-6 py-3 flex justify-between items-center">
-            <div className="flex items-center gap-2 font-extrabold text-lg text-emerald-600"><Icons.Leaf /> EcoCarbon</div>
-        </div>
-      )}
+      <div className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-slate-100 px-6 py-3 flex justify-between items-center md:hidden">
+         <div className="flex items-center gap-2 font-extrabold text-lg text-emerald-600"><Icons.Leaf /> EcoCarbon</div>
+      </div>
 
       <main className="relative z-10 max-w-6xl mx-auto px-4 mt-6">
         <AnimatePresence mode="wait">
@@ -468,41 +482,39 @@ export default function Dashboard({ session }) {
         </AnimatePresence>
       </main>
 
-      {/* BOTTOM NAV BAR (FULL WIDTH - MENEMPEL DI BAWAH) */}
-      {isMobile && (
-        <div className="fixed bottom-0 left-0 w-full bg-white border-t border-slate-200 z-[9999]">
-            <div className="flex justify-around items-center h-16 pb-1"> 
-                {[
-                { id: 'home', label: 'Home', icon: Icons.Leaf },
-                { id: 'forest', label: 'Hutan', icon: Icons.Tree },
-                { id: 'leaderboard', label: 'Top', icon: Icons.Fire },
-                { id: 'profile', label: 'Profil', icon: Icons.User },
-                { id: 'about', label: 'Info', icon: Icons.Info }
-                ].map((menu) => {
-                    const isActive = currentPage === menu.id;
-                    return (
-                    <button 
-                        key={menu.id} 
-                        onClick={() => setCurrentPage(menu.id)} 
-                        className="relative flex flex-col items-center justify-center w-full h-full"
-                    >
-                        {isActive && (
-                            <motion.div 
-                                layoutId="nav-bg" 
-                                className="absolute inset-0 bg-emerald-50 rounded-lg -z-10 mx-1 mb-1" 
-                                initial={false} 
-                                transition={{ type: "spring", stiffness: 500, damping: 30 }}
-                            />
-                        )}
-                        <div className={`transition-all duration-300 ${isActive ? 'text-emerald-600 -translate-y-0.5' : 'text-slate-400'}`}>
-                            <menu.icon />
-                        </div>
-                        {isActive && <span className="text-[10px] font-bold text-emerald-700 mt-0.5">{menu.label}</span>}
-                    </button>
-                )})}
-            </div>
+      {/* BOTTOM NAV BAR (FULL WIDTH & FIXED BOTTOM) */}
+      <div className="fixed bottom-0 left-0 w-full bg-white border-t border-slate-200 z-[9999] block md:hidden">
+        <div className="flex justify-around items-center h-16 pb-1"> 
+            {[
+              { id: 'home', label: 'Home', icon: Icons.Leaf },
+              { id: 'forest', label: 'Hutan', icon: Icons.Tree },
+              { id: 'leaderboard', label: 'Top', icon: Icons.Fire },
+              { id: 'profile', label: 'Profil', icon: Icons.User },
+              { id: 'about', label: 'Info', icon: Icons.Info }
+            ].map((menu) => {
+                const isActive = currentPage === menu.id;
+                return (
+                <button 
+                    key={menu.id} 
+                    onClick={() => setCurrentPage(menu.id)} 
+                    className="relative flex flex-col items-center justify-center w-full h-full"
+                >
+                    {isActive && (
+                        <motion.div 
+                            layoutId="nav-bg" 
+                            className="absolute inset-0 bg-emerald-50 rounded-lg -z-10 mx-1 mb-1" 
+                            initial={false} 
+                            transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                        />
+                    )}
+                    <div className={`transition-all duration-300 ${isActive ? 'text-emerald-600 -translate-y-0.5' : 'text-slate-400'}`}>
+                        <menu.icon />
+                    </div>
+                    {isActive && <span className="text-[10px] font-bold text-emerald-700 mt-0.5">{menu.label}</span>}
+                </button>
+            )})}
         </div>
-      )}
+      </div>
 
     </div>
   );
