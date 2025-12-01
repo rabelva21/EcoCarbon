@@ -81,7 +81,7 @@ const HomeView = ({ activities, activityType, setActivityType, inputValue, setIn
     <motion.div initial="initial" animate="in" exit="out" variants={pageVariants} transition={pageTransition} className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start pb-24">
       <div className="lg:col-span-2 space-y-8">
         
-        {/* STATISTIK */}
+        {/* STATISTIK 3 GRID */}
         <div>
             <h3 className="text-xl font-bold text-slate-800 mb-4 flex items-center gap-2">📊 Statistik Emisi</h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -189,6 +189,7 @@ const ActivityDetailView = ({ activity, onBack }) => {
             <button onClick={onBack} className="flex items-center gap-2 text-slate-500 hover:text-slate-800 font-bold mb-6 transition-colors">
                 <Icons.ArrowLeft /> Kembali
             </button>
+            
             <div className="bg-white rounded-[2.5rem] shadow-xl border border-slate-100 overflow-hidden">
                 <div className="bg-slate-900 p-8 text-white relative overflow-hidden">
                     <div className="absolute top-0 right-0 p-8 opacity-10 scale-[2]"><Icons.Fire /></div>
@@ -207,6 +208,14 @@ const ActivityDetailView = ({ activity, onBack }) => {
                             <p className="text-lg font-bold text-blue-800">{activity.amount > 5 ? "Tinggi ⚠️" : "Rendah ✅"}</p>
                         </div>
                     </div>
+                    
+                    <h3 className="font-bold text-slate-800 mb-2">Analisis Lingkungan</h3>
+                    <p className="text-slate-600 leading-relaxed text-sm mb-4">
+                        Aktivitas ini menyumbang sebanyak <strong>{activity.amount} kg CO₂</strong> ke atmosfer. 
+                        {activity.amount > 5 
+                            ? " Angka ini cukup tinggi. Cobalah mencari alternatif yang lebih ramah lingkungan lain kali." 
+                            : " Angka ini tergolong rendah. Terima kasih sudah menjaga bumi!"}
+                    </p>
                     <div className="bg-slate-100 p-4 rounded-xl text-xs text-slate-500 font-mono">
                         ID Transaksi: {activity.id}<br/>
                         Waktu Input: {new Date(activity.created_at).toLocaleTimeString()}
@@ -235,7 +244,7 @@ const ForestView = ({ activities }) => {
     <motion.div initial="initial" animate="in" exit="out" variants={pageVariants} className="text-center pb-24">
       <div className="relative rounded-[3rem] shadow-2xl overflow-hidden min-h-[500px] md:min-h-[600px] flex flex-col justify-end border-4 border-white bg-slate-800">
         <div className="absolute inset-0 z-0">
-            <img src="https://images.unsplash.com/photo-1511497584788-876760111969?q=80&w=2670&auto=format&fit=crop" alt="Forest Art" className="w-full h-full object-cover opacity-80"/>
+            <img src="https://images.unsplash.com/photo-1511497584788-876760111969?q=80&w=2670&auto=format&fit=crop" alt="Forest Art Background" className="w-full h-full object-cover opacity-80"/>
             <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-black/40"></div>
         </div>
         <div className="relative z-10 p-8 md:p-10 mb-auto mt-10">
@@ -245,7 +254,7 @@ const ForestView = ({ activities }) => {
         </div>
         <div className="relative z-10 px-6 pb-12 flex flex-wrap justify-center items-end gap-[-10px]">
           {trees.map((_, i) => (
-            <motion.div key={i} initial={{ scale: 0, y: 100 }} animate={{ scale: 1, y: 0 }} transition={{ delay: i * 0.05, type: "spring", stiffness: 200 }} className="text-emerald-300 w-16 h-16 sm:w-24 sm:h-24 filter drop-shadow-[0_10px_10px_rgba(0,0,0,0.5)] hover:scale-110 transition-transform">
+            <motion.div key={i} initial={{ scale: 0, y: 100 }} animate={{ scale: 1, y: 0 }} transition={{ delay: i * 0.05, type: "spring", stiffness: 200 }} className="text-emerald-300 w-16 h-16 sm:w-24 sm:h-24 filter drop-shadow-[0_10px_10px_rgba(0,0,0,0.5)] -ml-4 hover:scale-110 transition-transform">
                 <Icons.TreeSolid />
             </motion.div>
           ))}
@@ -265,7 +274,8 @@ const LeaderboardView = ({ session, onViewUser }) => {
     const fetchGlobalLeaderboard = async () => {
       setLoadingLB(true);
       const { data, error } = await supabase.from("footprints").select("*");
-      if (error) { setLoadingLB(false); return; }
+      
+      if (error) { console.error("Error fetching leaderboard:", error); setLoadingLB(false); return; }
 
       const groupedData = {};
       data.forEach(item => {
@@ -274,7 +284,10 @@ const LeaderboardView = ({ session, onViewUser }) => {
         const displayName = item.user_name && item.user_name !== "Anonymous" ? item.user_name : "Anonymous";
         const displayAvatar = item.avatar_url ? item.avatar_url : null;
 
-        if (!groupedData[uid]) groupedData[uid] = { id: uid, name: displayName, avatar: displayAvatar, total: 0, daily: 0, monthly: 0 };
+        if (!groupedData[uid]) {
+          groupedData[uid] = { id: uid, name: displayName, avatar: displayAvatar, total: 0, daily: 0, monthly: 0 };
+        }
+        // Always update with the latest non-Anonymous name found
         if (displayName !== "Anonymous") groupedData[uid].name = displayName;
         if (displayAvatar) groupedData[uid].avatar = displayAvatar;
 
@@ -300,9 +313,10 @@ const LeaderboardView = ({ session, onViewUser }) => {
     <motion.div initial="initial" animate="in" exit="out" variants={pageVariants} className="max-w-3xl mx-auto pb-24">
       <div className="bg-gradient-to-r from-violet-600 to-indigo-600 rounded-[2.5rem] p-8 text-white shadow-2xl mb-8 text-center relative overflow-hidden">
         <h2 className="text-2xl font-extrabold mb-2 relative z-10">🏆 Peringkat Pahlawan</h2>
-        <div className="inline-flex bg-black/20 p-1 rounded-full relative z-10 backdrop-blur-sm mt-4">
+        <p className="text-violet-100 relative z-10 mb-6 text-sm md:text-base">Semakin rendah emisimu, semakin tinggi peringkatmu!</p>
+        <div className="inline-flex bg-black/20 p-1 rounded-full relative z-10 backdrop-blur-sm">
             {['daily', 'monthly', 'total'].map((type) => (
-                <button key={type} onClick={() => setFilter(type)} className={`px-4 py-2 rounded-full text-xs font-bold transition-all ${filter === type ? 'bg-white text-indigo-600 shadow-md' : 'text-white/70 hover:text-white hover:bg-white/10'}`}>
+                <button key={type} onClick={() => setFilter(type)} className={`px-4 md:px-6 py-2 rounded-full text-xs md:text-sm font-bold transition-all ${filter === type ? 'bg-white text-indigo-600 shadow-md' : 'text-white/70 hover:text-white hover:bg-white/10'}`}>
                     {type === 'daily' ? 'Harian' : type === 'monthly' ? 'Bulanan' : 'Total'}
                 </button>
             ))}
@@ -311,6 +325,7 @@ const LeaderboardView = ({ session, onViewUser }) => {
 
       <div className="space-y-4">
         {loadingLB ? <div className="text-center py-10 text-slate-400">Memuat peringkat...</div> : 
+         leaderboardData.length === 0 ? <div className="text-center py-10 text-slate-400">Belum ada data peringkat.</div> : 
          leaderboardData.map((user, index) => {
             const colorClass = rankColors[index] || rankColors[3]; 
             return (
@@ -320,16 +335,16 @@ const LeaderboardView = ({ session, onViewUser }) => {
                 className={`flex items-center justify-between p-4 rounded-2xl border-2 ${colorClass} shadow-sm cursor-pointer hover:scale-[1.02] transition-transform ${user.isMe ? 'ring-2 ring-indigo-500 ring-offset-2' : ''}`}
             >
                 <div className="flex items-center gap-3">
-                    <div className="font-black text-lg w-6 text-center text-slate-400">{index + 1}</div>
-                    <div className="w-10 h-10 flex-shrink-0 flex items-center justify-center rounded-full bg-white border-2 border-white overflow-hidden">
-                        {user.avatar ? <img src={user.avatar} alt="avatar" className="w-full h-full object-cover" /> : <span className="text-xl">👤</span>}
-                    </div>
-                    <div className="flex flex-col">
-                        <span className="font-bold text-sm text-slate-700 truncate max-w-[100px]">{user.name}</span>
-                        {user.isMe && <span className="text-[9px] font-bold text-indigo-500 bg-indigo-50 px-2 rounded-full w-fit">It's You!</span>}
-                    </div>
+                <div className="font-black text-lg w-6 text-center text-slate-400">{index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : index + 1}</div>
+                <div className="w-10 h-10 flex-shrink-0 flex items-center justify-center rounded-full bg-white overflow-hidden border-2 border-white shadow-sm">
+                    {user.avatar ? <img src={user.avatar} alt="avatar" className="w-full h-full object-cover" /> : <span className="text-xl">👤</span>}
                 </div>
-                <div className="font-mono font-bold text-lg text-slate-700">{user.score.toFixed(1)} <span className="text-xs font-normal opacity-70">kg</span></div>
+                <div className="flex flex-col">
+                    <span className="font-bold text-sm text-slate-700 truncate max-w-[100px]">{user.name}</span>
+                    {user.isMe && <span className="text-[9px] font-bold text-indigo-500 bg-indigo-50 px-2 rounded-full w-fit">It's You!</span>}
+                </div>
+                </div>
+                <div className="font-mono font-bold text-lg text-slate-700">{user.score.toFixed(2)} <span className="text-xs font-normal opacity-70">kg</span></div>
             </motion.div>
             )})
         }
@@ -345,6 +360,7 @@ const UserDetailView = ({ user, onBack }) => {
             <button onClick={onBack} className="flex items-center gap-2 text-slate-500 hover:text-slate-800 font-bold mb-6 transition-colors">
                 <Icons.ArrowLeft /> Kembali
             </button>
+            
             <div className="bg-white rounded-[3rem] shadow-2xl p-8 text-center border border-slate-100">
                 <div className="w-28 h-28 mx-auto bg-slate-100 rounded-full mb-4 flex items-center justify-center overflow-hidden border-4 border-emerald-100 shadow-lg">
                     {user.avatar ? <img src={user.avatar} alt="avatar" className="w-full h-full object-cover" /> : <span className="text-5xl">👤</span>}
@@ -352,7 +368,7 @@ const UserDetailView = ({ user, onBack }) => {
                 <h2 className="text-2xl font-black text-slate-800">{user.name}</h2>
                 
                 {/* DETAIL DESKRIPSI BARU */}
-                <div className="mt-6 bg-slate-50 p-4 rounded-2xl text-sm text-slate-600 leading-relaxed border border-slate-100">
+                <div className="mt-6 bg-slate-50 p-4 rounded-2xl text-sm text-slate-600 leading-relaxed border border-slate-100 text-left">
                     <p>
                        Halo! <strong>{user.name}</strong> adalah salah satu pahlawan bumi. 
                        Pada bulan ini, ia telah menghasilkan jejak karbon sebesar <span className="font-bold text-emerald-600">{user.monthly.toFixed(2)} kg</span>.
@@ -469,200 +485,200 @@ const ProfileView = ({ session, totalEmission, onLogout }) => {
 
 // --- HALAMAN 5: TENTANG APLIKASI (About) ---
 const AboutView = () => (
-    <motion.div initial="initial" animate="in" exit="out" variants={pageVariants} className="max-w-2xl mx-auto pb-24">
-        <div className="bg-white rounded-[2.5rem] shadow-xl p-8 border border-slate-100 text-center">
-            <div className="w-20 h-20 bg-gradient-to-tr from-emerald-500 to-teal-500 rounded-3xl flex items-center justify-center text-white mx-auto mb-6 shadow-lg shadow-emerald-200">
-                <Icons.Leaf />
-            </div>
-            <h2 className="text-2xl font-black text-slate-800 mb-2">EcoCarbon</h2>
-            <p className="text-slate-500 font-medium text-sm">Versi 1.0.0 (Tugas Akhir PWA)</p>
-            
-            <div className="mt-8 text-left space-y-4">
-                <div className="bg-slate-50 p-5 rounded-2xl border border-slate-100">
-                    <h3 className="font-bold text-slate-800 mb-2">Tentang Aplikasi</h3>
-                    <p className="text-sm text-slate-600 leading-relaxed">
-                        EcoCarbon adalah aplikasi pelacak jejak karbon pribadi berbasis PWA. Aplikasi ini membantu pengguna menghitung dan mengurangi emisi karbon harian melalui gamifikasi.
-                    </p>
-                </div>
-                <div className="bg-slate-50 p-5 rounded-2xl border border-slate-100">
-                    <h3 className="font-bold text-slate-800 mb-2">Pengembang</h3>
-                    <p className="text-sm text-slate-600">
-                        Nama: <strong>Rabelva Evan Ligar (21120123140161)</strong><br/>
-                        Teknologi: React, Vite, Tailwind CSS, Supabase
-                    </p>
-                </div>
-            </div>
-            <p className="mt-10 text-xs text-slate-400">© 2025 EcoCarbon Project</p>
-        </div>
-    </motion.div>
+    <motion.div initial="initial" animate="in" exit="out" variants={pageVariants} className="max-w-2xl mx-auto pb-24">
+        <div className="bg-white rounded-[2.5rem] shadow-xl p-8 border border-slate-100 text-center">
+            <div className="w-20 h-20 bg-gradient-to-tr from-emerald-500 to-teal-500 rounded-3xl flex items-center justify-center text-white mx-auto mb-6 shadow-lg shadow-emerald-200">
+                <Icons.Leaf />
+            </div>
+            <h2 className="text-2xl font-black text-slate-800 mb-2">EcoCarbon</h2>
+            <p className="text-slate-500 font-medium text-sm">Versi 1.0.0 (Tugas Akhir PWA)</p>
+            
+            <div className="mt-8 text-left space-y-4">
+                <div className="bg-slate-50 p-5 rounded-2xl border border-slate-100">
+                    <h3 className="font-bold text-slate-800 mb-2">Tentang Aplikasi</h3>
+                    <p className="text-sm text-slate-600 leading-relaxed">
+                        EcoCarbon adalah aplikasi pelacak jejak karbon pribadi berbasis PWA. Aplikasi ini membantu pengguna menghitung dan mengurangi emisi karbon harian melalui gamifikasi.
+                    </p>
+                </div>
+                <div className="bg-slate-50 p-5 rounded-2xl border border-slate-100">
+                    <h3 className="font-bold text-slate-800 mb-2">Pengembang</h3>
+                    <p className="text-sm text-slate-600">
+                        Nama: <strong>Rabelva Evan Ligar (21120123140161)</strong><br/>
+                        Teknologi: React, Vite, Tailwind CSS, Supabase
+                    </p>
+                </div>
+            </div>
+            <p className="mt-10 text-xs text-slate-400">© 2025 EcoCarbon Project</p>
+        </div>
+    </motion.div>
 );
 
 // ==========================================
 // 4. MAIN CONTROLLER
 // ==========================================
 export default function Dashboard({ session }) {
-  const [currentPage, setCurrentPage] = useState("home");
-  const [isOffline, setIsOffline] = useState(!navigator.onLine);
+  const [currentPage, setCurrentPage] = useState("home");
+  const [isOffline, setIsOffline] = useState(!navigator.onLine);
 
-  useEffect(() => {
-    const handleOnline = () => setIsOffline(false);
-    const handleOffline = () => setIsOffline(true);
-    window.addEventListener('online', handleOnline);
-    window.addEventListener('offline', handleOffline);
-    return () => {
-      window.removeEventListener('online', handleOnline);
-      window.removeEventListener('offline', handleOffline);
-    };
-  }, []);
+  useEffect(() => {
+    const handleOnline = () => setIsOffline(false);
+    const handleOffline = () => setIsOffline(true);
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, []);
 
-  const [selectedActivity, setSelectedActivity] = useState(null);
-  const [selectedUser, setSelectedUser] = useState(null);
-  const [activities, setActivities] = useState([]);
-  const [totalEmission, setTotalEmission] = useState(0);
-  const [activityType, setActivityType] = useState("motor");
-  const [inputValue, setInputValue] = useState("");
-  const [calculatedEmission, setCalculatedEmission] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [isEditing, setIsEditing] = useState(false);
-  const [editId, setEditId] = useState(null);
+  const [selectedActivity, setSelectedActivity] = useState(null);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [activities, setActivities] = useState([]);
+  const [totalEmission, setTotalEmission] = useState(0);
+  const [activityType, setActivityType] = useState("motor");
+  const [inputValue, setInputValue] = useState("");
+  const [calculatedEmission, setCalculatedEmission] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editId, setEditId] = useState(null);
 
-  useEffect(() => {
-    if (inputValue && activityType) setCalculatedEmission((parseFloat(inputValue) * EMISSION_FACTORS[activityType].factor).toFixed(2));
-    else setCalculatedEmission("");
-  }, [inputValue, activityType]);
+  useEffect(() => {
+    if (inputValue && activityType) setCalculatedEmission((parseFloat(inputValue) * EMISSION_FACTORS[activityType].factor).toFixed(2));
+    else setCalculatedEmission("");
+  }, [inputValue, activityType]);
 
-  const fetchActivities = async () => {
-    const { data, error } = await supabase.from("footprints").select("*").eq("user_id", session.user.id).order("created_at", { ascending: false });
-    if (!error) {
-      setActivities(data);
-      setTotalEmission(data.reduce((acc, curr) => acc + (parseFloat(curr.amount) || 0), 0).toFixed(2));
-    }
-  };
+  const fetchActivities = async () => {
+    const { data, error } = await supabase.from("footprints").select("*").eq("user_id", session.user.id).order("created_at", { ascending: false });
+    if (!error) {
+      setActivities(data);
+      setTotalEmission(data.reduce((acc, curr) => acc + (parseFloat(curr.amount) || 0), 0).toFixed(2));
+    }
+  };
 
-  useEffect(() => { fetchActivities(); }, []);
+  useEffect(() => { fetchActivities(); }, []);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!calculatedEmission) return;
-    setLoading(true);
-    const finalActivityName = activityType === 'manual' ? "Aktivitas Manual" : `${EMISSION_FACTORS[activityType].label} (${inputValue} ${EMISSION_FACTORS[activityType].unit})`;
-    const metadata = session.user.user_metadata || {};
-    const userName = metadata.user_name || metadata.full_name || 'Anonymous';
-    const avatarUrl = metadata.avatar_url || null;
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!calculatedEmission) return;
+    setLoading(true);
+    const finalActivityName = activityType === 'manual' ? "Aktivitas Manual" : `${EMISSION_FACTORS[activityType].label} (${inputValue} ${EMISSION_FACTORS[activityType].unit})`;
+    const metadata = session.user.user_metadata || {};
+    const userName = metadata.user_name || metadata.full_name || 'Anonymous';
+    const avatarUrl = metadata.avatar_url || null;
 
-    if (isEditing) {
-      const { error } = await supabase.from("footprints").update({ 
-        activity: finalActivityName, amount: parseFloat(calculatedEmission), user_name: userName, avatar_url: avatarUrl
-      }).eq("id", editId);
-      if (!error) { cancelEdit(); fetchActivities(); }
-    } else {
-      const { error } = await supabase.from("footprints").insert({ 
-        user_id: session.user.id, activity: finalActivityName, amount: parseFloat(calculatedEmission), date: new Date().toISOString(), user_name: userName, avatar_url: avatarUrl
-      });
-      if (!error) { setInputValue(""); setCalculatedEmission(""); fetchActivities(); confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } }); }
-    }
-    setLoading(false);
-  };
+    if (isEditing) {
+      const { error } = await supabase.from("footprints").update({ 
+        activity: finalActivityName, amount: parseFloat(calculatedEmission), user_name: userName, avatar_url: avatarUrl
+      }).eq("id", editId);
+      if (!error) { cancelEdit(); fetchActivities(); }
+    } else {
+      const { error } = await supabase.from("footprints").insert({ 
+        user_id: session.user.id, activity: finalActivityName, amount: parseFloat(calculatedEmission), date: new Date().toISOString(), user_name: userName, avatar_url: avatarUrl
+      });
+      if (!error) { setInputValue(""); setCalculatedEmission(""); fetchActivities(); confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } }); }
+    }
+    setLoading(false);
+  };
 
-  const handleDelete = async (id) => {
-    if(!window.confirm("Hapus data ini?")) return;
-    const { error } = await supabase.from("footprints").delete().eq("id", id);
-    if (!error) fetchActivities();
-  };
+  const handleDelete = async (id) => {
+    if(!window.confirm("Hapus data ini?")) return;
+    const { error } = await supabase.from("footprints").delete().eq("id", id);
+    if (!error) fetchActivities();
+  };
 
-  const handleEdit = (item) => {
-    setIsEditing(true); setEditId(item.id); setActivityType("manual"); setInputValue(item.amount); setCalculatedEmission(item.amount); window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
+  const handleEdit = (item) => {
+    setIsEditing(true); setEditId(item.id); setActivityType("manual"); setInputValue(item.amount); setCalculatedEmission(item.amount); window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
-  const cancelEdit = () => { setIsEditing(false); setEditId(null); setInputValue(""); setCalculatedEmission(""); setActivityType("motor"); };
-  const handleLogout = async () => { await supabase.auth.signOut(); };
+  const cancelEdit = () => { setIsEditing(false); setEditId(null); setInputValue(""); setCalculatedEmission(""); setActivityType("motor"); };
+  const handleLogout = async () => { await supabase.auth.signOut(); };
 
-  const handleViewActivity = (item) => { setSelectedActivity(item); setCurrentPage('activity-detail'); };
-  const handleViewUser = (user) => { setSelectedUser(user); setCurrentPage('user-detail'); };
+  const handleViewActivity = (item) => { setSelectedActivity(item); setCurrentPage('activity-detail'); };
+  const handleViewUser = (user) => { setSelectedUser(user); setCurrentPage('user-detail'); };
 
-  return (
-    <div className="min-h-screen bg-slate-50 relative font-sans text-slate-800 pb-32 overflow-x-hidden">
-      
-      {isOffline && (
-        <div className="bg-red-500 text-white text-center text-xs font-bold py-2 px-4 fixed top-0 left-0 w-full z-[100] animate-pulse shadow-md">
-          📡 Anda sedang Offline. Beberapa fitur mungkin terbatas.
-        </div>
-      )}
+  return (
+    <div className="min-h-screen bg-slate-50 relative font-sans text-slate-800 pb-32 overflow-x-hidden">
+      
+      {isOffline && (
+        <div className="bg-red-500 text-white text-center text-xs font-bold py-2 px-4 fixed top-0 left-0 w-full z-[100] animate-pulse shadow-md">
+          📡 Anda sedang Offline. Beberapa fitur mungkin terbatas.
+        </div>
+      )}
 
-      <div className="fixed top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
-         <motion.div animate={{ x: [0, 20, 0], y: [0, -20, 0] }} transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }} className="absolute top-[-10%] right-[-5%] w-[600px] h-[600px] bg-teal-200/30 rounded-full blur-[120px]"></motion.div>
-         <motion.div animate={{ x: [0, -30, 0], y: [0, 30, 0] }} transition={{ duration: 10, repeat: Infinity, ease: "easeInOut", delay: 1 }} className="absolute bottom-[-10%] left-[-10%] w-[500px] h-[500px] bg-emerald-200/30 rounded-full blur-[150px]"></motion.div>
-      </div>
+      <div className="fixed top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
+         <motion.div animate={{ x: [0, 20, 0], y: [0, -20, 0] }} transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }} className="absolute top-[-10%] right-[-5%] w-[600px] h-[600px] bg-teal-200/30 rounded-full blur-[120px]"></motion.div>
+         <motion.div animate={{ x: [0, -30, 0], y: [0, 30, 0] }} transition={{ duration: 10, repeat: Infinity, ease: "easeInOut", delay: 1 }} className="absolute bottom-[-10%] left-[-10%] w-[500px] h-[500px] bg-emerald-200/30 rounded-full blur-[150px]"></motion.div>
+      </div>
 
-      {/* TOP NAV: DESKTOP ONLY */}
-      <nav className="sticky top-0 z-50 bg-white/70 backdrop-blur-xl border-b border-white/40 shadow-sm transition-all hidden md:block">
-        <div className="max-w-6xl mx-auto px-6 py-4 flex flex-col md:flex-row gap-4 justify-between items-center">
-          <div className="flex items-center gap-2">
-            <div className="bg-gradient-to-tr from-emerald-500 to-teal-500 p-2 rounded-xl text-white shadow-lg shadow-emerald-500/30"><Icons.Leaf /></div>
-            <span className="text-xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-slate-800 to-slate-600">EcoCarbon</span>
-          </div>
-          <div className="flex bg-slate-100/50 p-1 rounded-full border border-white/50 overflow-x-auto max-w-full no-scrollbar">
-            {[{ id: 'home', label: 'Beranda' }, { id: 'forest', label: 'Hutan' }, { id: 'leaderboard', label: 'Peringkat' }, { id: 'profile', label: 'Profil' }, { id: 'about', label: 'Tentang' }]
-            .map(menu => (<button key={menu.id} onClick={() => setCurrentPage(menu.id)} className={`px-5 py-2 rounded-full text-sm font-bold transition-all whitespace-nowrap ${currentPage === menu.id ? 'bg-white text-emerald-600 shadow-sm scale-105' : 'text-slate-500 hover:text-slate-800'}`}>{menu.label}</button>))}
-          </div>
-          <button onClick={handleLogout} className="flex items-center gap-2 text-sm font-bold text-slate-500 hover:text-red-500 bg-slate-100 hover:bg-red-50 px-4 py-2 rounded-full transition-all"><Icons.LogOut /> Keluar</button>
-        </div>
-      </nav>
+      {/* TOP NAV: DESKTOP ONLY */}
+      <nav className="sticky top-0 z-50 bg-white/70 backdrop-blur-xl border-b border-white/40 shadow-sm transition-all hidden md:block">
+        <div className="max-w-6xl mx-auto px-6 py-4 flex flex-col md:flex-row gap-4 justify-between items-center">
+          <div className="flex items-center gap-2">
+            <div className="bg-gradient-to-tr from-emerald-500 to-teal-500 p-2 rounded-xl text-white shadow-lg shadow-emerald-500/30"><Icons.Leaf /></div>
+            <span className="text-xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-slate-800 to-slate-600">EcoCarbon</span>
+          </div>
+          <div className="flex bg-slate-100/50 p-1 rounded-full border border-white/50 overflow-x-auto max-w-full no-scrollbar">
+            {[{ id: 'home', label: 'Beranda' }, { id: 'forest', label: 'Hutan' }, { id: 'leaderboard', label: 'Peringkat' }, { id: 'profile', label: 'Profil' }, { id: 'about', label: 'Tentang' }]
+            .map(menu => (<button key={menu.id} onClick={() => setCurrentPage(menu.id)} className={`px-5 py-2 rounded-full text-sm font-bold transition-all whitespace-nowrap ${currentPage === menu.id ? 'bg-white text-emerald-600 shadow-sm scale-105' : 'text-slate-500 hover:text-slate-800'}`}>{menu.label}</button>))}
+          </div>
+          <button onClick={handleLogout} className="flex items-center gap-2 text-sm font-bold text-slate-500 hover:text-red-500 bg-slate-100 hover:bg-red-50 px-4 py-2 rounded-full transition-all"><Icons.LogOut /> Keluar</button>
+        </div>
+      </nav>
 
-      {/* MOBILE HEADER */}
-      <div className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-100 px-6 py-4 flex justify-center items-center md:hidden shadow-sm">
-         <div className="flex items-center gap-2">
-            <div className="bg-emerald-500 p-1.5 rounded-lg text-white shadow-md"><Icons.Leaf /></div>
-            <span className="text-lg font-extrabold text-slate-800">EcoCarbon</span>
-         </div>
-      </div>
+      {/* MOBILE HEADER */}
+      <div className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-100 px-6 py-4 flex justify-center items-center md:hidden shadow-sm">
+         <div className="flex items-center gap-2">
+            <div className="bg-emerald-500 p-1.5 rounded-lg text-white shadow-md"><Icons.Leaf /></div>
+            <span className="text-lg font-extrabold text-slate-800">EcoCarbon</span>
+         </div>
+      </div>
 
-      <main className="relative z-10 max-w-6xl mx-auto px-4 md:px-6 mt-6 md:mt-10">
-        <AnimatePresence mode="wait">
-          {currentPage === "home" && <HomeView key="home" activities={activities} totalEmission={totalEmission} activityType={activityType} setActivityType={setActivityType} inputValue={inputValue} setInputValue={setInputValue} calculatedEmission={calculatedEmission} loading={loading} handleSubmit={handleSubmit} handleEdit={handleEdit} handleDelete={handleDelete} isEditing={isEditing} cancelEdit={cancelEdit} onViewDetail={handleViewActivity} />}
-          {currentPage === "forest" && <ForestView key="forest" activities={activities} />}
-          {currentPage === "leaderboard" && <LeaderboardView key="leaderboard" session={session} onViewUser={handleViewUser} />}
-          {currentPage === "profile" && <ProfileView key="profile" session={session} totalEmission={totalEmission} onLogout={handleLogout} />}
-          {currentPage === "about" && <AboutView key="about" />}
-          {currentPage === "activity-detail" && selectedActivity && <ActivityDetailView key="detail-act" activity={selectedActivity} onBack={() => setCurrentPage('home')} />}
-          {currentPage === "user-detail" && selectedUser && <UserDetailView key="detail-user" user={selectedUser} onBack={() => setCurrentPage('leaderboard')} />}
-        </AnimatePresence>
-      </main>
+      <main className="relative z-10 max-w-6xl mx-auto px-4 md:px-6 mt-6 md:mt-10">
+        <AnimatePresence mode="wait">
+          {currentPage === "home" && <HomeView key="home" activities={activities} totalEmission={totalEmission} activityType={activityType} setActivityType={setActivityType} inputValue={inputValue} setInputValue={setInputValue} calculatedEmission={calculatedEmission} loading={loading} handleSubmit={handleSubmit} handleEdit={handleEdit} handleDelete={handleDelete} isEditing={isEditing} cancelEdit={cancelEdit} onViewDetail={handleViewActivity} />}
+          {currentPage === "forest" && <ForestView key="forest" activities={activities} />}
+          {currentPage === "leaderboard" && <LeaderboardView key="leaderboard" session={session} onViewUser={handleViewUser} />}
+          {currentPage === "profile" && <ProfileView key="profile" session={session} totalEmission={totalEmission} onLogout={handleLogout} />}
+          {currentPage === "about" && <AboutView key="about" />}
+          {currentPage === "activity-detail" && selectedActivity && <ActivityDetailView key="detail-act" activity={selectedActivity} onBack={() => setCurrentPage('home')} />}
+          {currentPage === "user-detail" && selectedUser && <UserDetailView key="detail-user" user={selectedUser} onBack={() => setCurrentPage('leaderboard')} />}
+        </AnimatePresence>
+      </main>
 
-      {/* BOTTOM NAV BAR (ESTETIK) */}
-      <div className="fixed bottom-0 left-0 w-full md:hidden z-50">
-        <div className="mx-4 mb-4 bg-white/90 backdrop-blur-lg border border-white/50 shadow-[0_-5px_20px_rgba(0,0,0,0.05)] rounded-2xl p-2 flex justify-around items-center">
-            {[
-              { id: 'home', label: 'Home', icon: Icons.Leaf },
-              { id: 'forest', label: 'Hutan', icon: Icons.Tree },
-              { id: 'leaderboard', label: 'Top', icon: Icons.Fire },
-              { id: 'profile', label: 'Profil', icon: Icons.User },
-              { id: 'about', label: 'Info', icon: Icons.Info }
-            ].map((menu) => {
-                const isActive = currentPage === menu.id;
-                return (
-                <button 
-                    key={menu.id} 
-                    onClick={() => setCurrentPage(menu.id)} 
-                    className="relative flex flex-col items-center justify-center w-full h-12"
-                >
-                    {isActive && (
-                        <motion.div 
-                            layoutId="nav-bg" 
-                            className="absolute inset-0 bg-emerald-100 rounded-xl -z-10" 
-                            initial={false} 
-                            transition={{ type: "spring", stiffness: 500, damping: 30 }}
-                        />
-                    )}
-                    <div className={`transition-all duration-300 ${isActive ? 'text-emerald-600 scale-110 -translate-y-1' : 'text-slate-400'}`}>
-                        <menu.icon />
-                    </div>
-                    {isActive && <span className="text-[9px] font-bold text-emerald-700 mt-0.5">{menu.label}</span>}
-                </button>
-            )})}
-        </div>
-      </div>
+      {/* BOTTOM NAV BAR (ESTETIK) */}
+      <div className="fixed bottom-0 left-0 w-full md:hidden z-50">
+        <div className="mx-4 mb-4 bg-white/90 backdrop-blur-lg border border-white/50 shadow-[0_-5px_20px_rgba(0,0,0,0.05)] rounded-2xl p-2 flex justify-around items-center">
+            {[
+              { id: 'home', label: 'Home', icon: Icons.Leaf },
+              { id: 'forest', label: 'Hutan', icon: Icons.Tree },
+              { id: 'leaderboard', label: 'Top', icon: Icons.Fire },
+              { id: 'profile', label: 'Profil', icon: Icons.User },
+              { id: 'about', label: 'Info', icon: Icons.Info }
+            ].map((menu) => {
+                const isActive = currentPage === menu.id;
+                return (
+                <button 
+                    key={menu.id} 
+                    onClick={() => setCurrentPage(menu.id)} 
+                    className="relative flex flex-col items-center justify-center w-full h-12"
+                >
+                    {isActive && (
+                        <motion.div 
+                            layoutId="nav-bg" 
+                            className="absolute inset-0 bg-emerald-100 rounded-xl -z-10" 
+                            initial={false} 
+                            transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                        />
+                    )}
+                    <div className={`transition-all duration-300 ${isActive ? 'text-emerald-600 scale-110 -translate-y-1' : 'text-slate-400'}`}>
+                        <menu.icon />
+                    </div>
+                    {isActive && <span className="text-[9px] font-bold text-emerald-700 mt-0.5">{menu.label}</span>}
+                </button>
+            )})}
+        </div>
+      </div>
 
-    </div>
-  );
+    </div>
+  );
 }
