@@ -1,22 +1,23 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App.jsx'
-
-// 1. IMPORT CSS (Wajib agar tampilan tidak putih-putih pinggirnya)
 import './components/index.css' 
 
-// 2. LOGIKA PWA / SERVICE WORKER (Langsung disini saja biar simpel)
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js')
-      .then(registration => {
-        console.log('SW registered: ', registration);
-      })
-      .catch(registrationError => {
-        console.log('SW registration failed: ', registrationError);
-      });
-  });
-}
+// PERBAIKAN: Gunakan import dari virtual module vite-plugin-pwa
+// Jangan register manual pakai navigator.serviceWorker.register
+import { registerSW } from 'virtual:pwa-register'
+
+const updateSW = registerSW({
+  onNeedRefresh() {
+    // Munculkan popup konfirmasi jika ada update baru
+    if (confirm('Konten baru tersedia. Refresh sekarang?')) {
+      updateSW(true)
+    }
+  },
+  onOfflineReady() {
+    console.log('Aplikasi siap bekerja offline')
+  },
+})
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
