@@ -3,9 +3,7 @@ import { supabase } from "../supabaseClient";
 import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
 
-// ==========================================
-// 1. KOLEKSI ASET & IKON
-// ==========================================
+// --- ASET IKON (SAMA SEPERTI SEBELUMNYA) ---
 const Icons = {
   Leaf: () => <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 3v4M3 5v4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path></svg>,
   Tree: () => <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>,
@@ -25,9 +23,6 @@ const Icons = {
   User: () => <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>,
 };
 
-// ==========================================
-// 2. CONFIG & HELPERS
-// ==========================================
 const EMISSION_FACTORS = {
   "motor": { label: "Naik Motor", unit: "km", factor: 0.113 },
   "mobil": { label: "Naik Mobil (Bensin)", unit: "km", factor: 0.192 },
@@ -48,7 +43,6 @@ const isToday = (dateString) => {
   const today = new Date();
   return date.getDate() === today.getDate() && date.getMonth() === today.getMonth() && date.getFullYear() === today.getFullYear();
 };
-
 const isThisMonth = (dateString) => {
   if (!dateString) return false;
   const date = new Date(dateString);
@@ -56,10 +50,7 @@ const isThisMonth = (dateString) => {
   return date.getMonth() === today.getMonth() && date.getFullYear() === today.getFullYear();
 };
 
-// ==========================================
-// 3. SUB-COMPONENTS
-// ==========================================
-
+// --- SUB COMPONENTS ---
 const HomeView = ({ activities, activityType, setActivityType, inputValue, setInputValue, calculatedEmission, loading, handleSubmit, handleEdit, handleDelete, isEditing, cancelEdit, onViewDetail }) => {
   const stats = useMemo(() => {
     let daily = 0; let monthly = 0; let total = 0;
@@ -95,7 +86,6 @@ const HomeView = ({ activities, activityType, setActivityType, inputValue, setIn
                 </div>
             </div>
         </div>
-
         <div>
           <h3 className="text-xl font-bold text-slate-800 mb-4 flex items-center gap-2">📝 Riwayat Aktivitas</h3>
           {activities.length === 0 ? (
@@ -103,7 +93,7 @@ const HomeView = ({ activities, activityType, setActivityType, inputValue, setIn
               <p className="text-slate-500 font-medium">Belum ada data aktivitas.</p>
             </div>
           ) : (
-            <div className="grid gap-3 pb-24">
+            <div className="grid gap-3">
               <AnimatePresence>
               {activities.map((item) => (
                 <motion.div 
@@ -112,25 +102,20 @@ const HomeView = ({ activities, activityType, setActivityType, inputValue, setIn
                     initial={{ opacity: 0, x: -20 }} 
                     animate={{ opacity: 1, x: 0 }} 
                     exit={{ opacity: 0, height: 0 }} 
-                    className="group relative flex flex-col justify-between p-5 rounded-2xl bg-white/80 border border-white shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer gap-4"
+                    className="group relative flex flex-col sm:flex-row justify-between items-start sm:items-center p-5 rounded-2xl bg-white/80 border border-white shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer gap-4"
                 >
-                  <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-4 w-full sm:w-auto">
                     <div className="p-3 rounded-2xl bg-emerald-50 text-emerald-600 shadow-sm shrink-0"><Icons.Fire /></div>
                     <div className="min-w-0 flex-1">
                       <h4 className="font-bold text-lg text-slate-700 truncate">{item.activity}</h4>
                       <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">{new Date(item.created_at).toLocaleDateString()}</p>
                     </div>
                   </div>
-                  
-                  <div className="flex items-center justify-between w-full pt-3 border-t border-slate-100 mt-1">
+                  <div className="flex items-center justify-between w-full sm:w-auto gap-4 pl-0 sm:pl-4 sm:border-l border-slate-100">
                     <span className="font-extrabold text-xl text-slate-700">{item.amount} <span className="text-sm font-normal text-slate-400">kg</span></span>
                     <div className="flex gap-2">
-                      <button onClick={(e) => { e.stopPropagation(); handleEdit(item); }} className="px-3 py-2 bg-amber-50 text-amber-500 hover:bg-amber-100 rounded-xl text-sm font-bold flex items-center gap-1 transition-colors">
-                        <Icons.Pencil /> Edit
-                      </button>
-                      <button onClick={(e) => { e.stopPropagation(); handleDelete(item.id); }} className="px-3 py-2 bg-red-50 text-red-500 hover:bg-red-100 rounded-xl text-sm font-bold flex items-center gap-1 transition-colors">
-                        <Icons.Trash /> Hapus
-                      </button>
+                      <button onClick={(e) => { e.stopPropagation(); handleEdit(item); }} className="p-2 bg-amber-50 text-amber-500 hover:bg-amber-100 rounded-xl transition-colors"><Icons.Pencil /></button>
+                      <button onClick={(e) => { e.stopPropagation(); handleDelete(item.id); }} className="p-2 bg-red-50 text-red-500 hover:bg-red-100 rounded-xl transition-colors"><Icons.Trash /></button>
                     </div>
                   </div>
                 </motion.div>
@@ -140,7 +125,6 @@ const HomeView = ({ activities, activityType, setActivityType, inputValue, setIn
           )}
         </div>
       </div>
-
       <div className="lg:col-span-1 space-y-6">
         <div className={`p-8 rounded-[2.5rem] border shadow-2xl transition-all duration-500 ${isEditing ? 'bg-amber-50 border-amber-200' : 'bg-white border-white/50'}`}>
           <div className="flex items-center justify-between mb-6">
@@ -177,13 +161,13 @@ const ActivityDetailView = ({ activity, onBack }) => {
                 <Icons.ArrowLeft /> Kembali
             </button>
             <div className="bg-white rounded-[2.5rem] shadow-xl border border-slate-100 overflow-hidden">
-                <div className="bg-slate-900 p-8 text-white relative">
+                <div className="bg-slate-900 p-8 text-white relative overflow-hidden">
                     <div className="absolute top-0 right-0 p-8 opacity-10 scale-[2]"><Icons.Fire /></div>
                     <p className="text-slate-400 font-bold uppercase text-xs mb-2">Detail Aktivitas</p>
-                    <h2 className="text-2xl font-bold">{activity.activity}</h2>
+                    <h2 className="text-3xl font-bold">{activity.activity}</h2>
                     <p className="mt-2 opacity-80 text-sm">{new Date(activity.created_at).toLocaleDateString()}</p>
                 </div>
-                <div className="p-6">
+                <div className="p-6 md:p-8">
                     <div className="grid grid-cols-2 gap-4 mb-6">
                         <div className="bg-emerald-50 p-4 rounded-2xl text-center"><p className="text-xs font-bold text-emerald-600 mb-1">Emisi</p><p className="text-2xl font-black text-emerald-800">{activity.amount} kg</p></div>
                         <div className="bg-blue-50 p-4 rounded-2xl text-center"><p className="text-xs font-bold text-blue-600 mb-1">Dampak</p><p className="text-lg font-bold text-blue-800">{activity.amount > 5 ? "Tinggi ⚠️" : "Rendah ✅"}</p></div>
@@ -195,7 +179,6 @@ const ActivityDetailView = ({ activity, onBack }) => {
     )
 }
 
-// --- HALAMAN 2: HUTAN ---
 const ForestView = ({ activities }) => {
   const monthlyEmission = useMemo(() => {
     try {
@@ -206,7 +189,6 @@ const ForestView = ({ activities }) => {
   return (
     <motion.div initial="initial" animate="in" exit="out" variants={pageVariants} className="text-center pb-32">
       <div className="relative rounded-[3rem] shadow-2xl overflow-hidden min-h-[500px] md:min-h-[600px] flex flex-col justify-end border-4 border-white bg-slate-800">
-        {/* BACKGROUND HUTAN (KEMBALI ADA) */}
         <div className="absolute inset-0 z-0">
             <img src="https://images.unsplash.com/photo-1511497584788-876760111969?q=80&w=2670&auto=format&fit=crop" alt="Forest Art" className="w-full h-full object-cover opacity-80"/>
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-slate-800"></div>
@@ -282,7 +264,6 @@ const UserDetailView = ({ user, onBack }) => (
             <div className="w-24 h-24 mx-auto bg-slate-100 rounded-full mb-4 overflow-hidden">{user.avatar ? <img src={user.avatar} className="w-full h-full object-cover"/> : <span className="text-4xl leading-[6rem]">👤</span>}</div>
             <h2 className="text-2xl font-black text-slate-800">{user.name}</h2>
             
-            {/* DESKRIPSI USER (KEMBALI ADA) */}
             <div className="mt-6 bg-slate-50 p-4 rounded-2xl text-sm text-slate-600 leading-relaxed border border-slate-100 text-left">
                 <p>Halo! <strong>{user.name}</strong> adalah salah satu pahlawan bumi.</p>
                 <ul className="list-disc ml-4 mt-2 space-y-1">
@@ -298,10 +279,10 @@ const ProfileView = ({ session, totalEmission, onLogout }) => {
   const [username, setUsername] = useState(session.user.user_metadata.user_name || 'Anonymous');
   const [avatarUrl, setAvatarUrl] = useState(session.user.user_metadata.avatar_url || null);
   const [isEdit, setIsEdit] = useState(false); const [loading, setLoading] = useState(false);
-  const [uploading, setUploading] = useState(false);
+  const [uploading, setUploading] = useState(false); // TAMBAHAN: State uploading untuk foto
   const joinDate = new Date(session.user.created_at).toLocaleDateString('id-ID', { month: 'long', year: 'numeric' });
 
-  // --- FITUR UPLOAD FOTO DIKEMBALIKAN ---
+  // --- FITUR UPLOAD FOTO (KEMBALI ADA) ---
   const uploadAvatar = async (event) => {
     try {
       setUploading(true);
@@ -331,8 +312,7 @@ const ProfileView = ({ session, totalEmission, onLogout }) => {
                 <div className="w-28 h-28 bg-white p-1 rounded-full shadow-lg mb-4 overflow-hidden border-4 border-white">
                     {avatarUrl ? <img src={avatarUrl} className="w-full h-full object-cover rounded-full"/> : <span className="text-5xl leading-[6rem]">😎</span>}
                 </div>
-                
-                {/* TOMBOL EDIT/UPLOAD FOTO DIKEMBALIKAN */}
+                {/* TOMBOL UPLOAD (KEMBALI ADA) */}
                 {isEdit && (
                   <label className="absolute bottom-4 right-0 bg-slate-800 text-white p-3 rounded-full cursor-pointer hover:bg-slate-700 shadow-md transition-all">
                     {uploading ? <span className="block w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></span> : <Icons.Pencil />}
@@ -394,17 +374,15 @@ const AboutView = () => (
 export default function Dashboard({ session }) {
   const [currentPage, setCurrentPage] = useState("home");
   const [isOffline, setIsOffline] = useState(!navigator.onLine);
-  
-  // LOGIKA DETEKSI MOBILE (WAJIB UNTUK VERCEL)
-  const [isMobile, setIsMobile] = useState(false);
 
+  // DETEKSI MOBILE UNTUK TAMPILAN NAVBAR
+  const [isMobile, setIsMobile] = useState(false);
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768);
     handleResize(); // Cek saat pertama load
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
-  // ------------------------------------------
 
   useEffect(() => {
     const handleStatus = () => setIsOffline(!navigator.onLine);
@@ -458,7 +436,7 @@ export default function Dashboard({ session }) {
     <div className="min-h-screen bg-slate-50 font-sans text-slate-800 pb-0 overflow-x-hidden">
       {isOffline && <div className="bg-red-500 text-white text-center text-xs font-bold py-2 fixed top-0 w-full z-[100]">📡 Offline Mode</div>}
       
-      {/* HEADER DESKTOP (Disembunyikan jika mobile) */}
+      {/* HEADER DESKTOP */}
       {!isMobile && (
         <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-white/50 px-6 py-4 flex justify-between items-center">
             <div className="flex items-center gap-2 font-black text-xl text-emerald-600"><Icons.Leaf /> EcoCarbon</div>
@@ -471,7 +449,7 @@ export default function Dashboard({ session }) {
         </nav>
       )}
 
-      {/* MOBILE HEADER (Logo only) */}
+      {/* MOBILE HEADER */}
       {isMobile && (
         <div className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-slate-100 px-6 py-3 flex justify-between items-center">
             <div className="flex items-center gap-2 font-extrabold text-lg text-emerald-600"><Icons.Leaf /> EcoCarbon</div>
@@ -490,7 +468,7 @@ export default function Dashboard({ session }) {
         </AnimatePresence>
       </main>
 
-      {/* BOTTOM NAV BAR (FULL WIDTH - FIX UNTUK VERCEL MOBILE) */}
+      {/* BOTTOM NAV BAR (FULL WIDTH - MENEMPEL DI BAWAH) */}
       {isMobile && (
         <div className="fixed bottom-0 left-0 w-full bg-white border-t border-slate-200 z-[9999]">
             <div className="flex justify-around items-center h-16 pb-1"> 

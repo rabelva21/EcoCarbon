@@ -20,17 +20,19 @@ export default defineConfig({
         theme_color: '#10b981',
         background_color: '#f8fafc',
         display: 'standalone',
+        orientation: 'portrait',
+        scope: '/',
+        start_url: '/',
         icons: [
           {
-            // PERBAIKAN 1: Hapus kata 'public/' dari src.
-            // Gunakan nama file persis seperti di folder Anda (dengan spasi dan kurung)
-            src: '/icons/icon-192.png',
+            // PERBAIKAN UTAMA: MENGGUNAKAN NAMA FILE BARU
+            src: '/icons/icon-192.png', 
             sizes: '192x192',
             type: 'image/png',
             purpose: 'any maskable'
           },
           {
-            src: '/icons/icon-512.png',
+            src: '/icons/icon-512.png', 
             sizes: '512x512',
             type: 'image/png',
             purpose: 'any maskable'
@@ -39,35 +41,47 @@ export default defineConfig({
       },
       
       workbox: {
-        globPatterns: ['**/*.{js,css,html,ico,png,svg,webmanifest}'],
-        
-        // PERBAIKAN 2: Agar tidak White Screen saat offline
+        // Mencegah layar putih offline & error MIME type
         navigateFallback: '/index.html',
+        navigateFallbackDenylist: [/^\/api\//, /\.[a-z]+$/],
+        globPatterns: ['**/*.{js,css,html,ico,png,svg,woff,woff2}'],
         
-        // PERBAIKAN 3: Agar tidak error "MIME type text/html"
-        // Mencegah Service Worker mengganti file JS/Gambar yang error dengan index.html
-        navigateFallbackDenylist: [
-          /^\/api\//,           // Abaikan request API
-          /\.[a-z]+$/           // Abaikan semua file yang punya ekstensi (.js, .css, .png, dll)
-        ],
-
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/images\.unsplash\.com\/.*/i,
             handler: 'CacheFirst',
             options: {
               cacheName: 'unsplash-images-cache',
-              expiration: {
-                maxEntries: 20,
-                maxAgeSeconds: 60 * 60 * 24 * 7 
-              },
-              cacheableResponse: {
-                statuses: [0, 200]
-              }
+              expiration: { maxEntries: 20, maxAgeSeconds: 60 * 60 * 24 * 7 },
+              cacheableResponse: { statuses: [0, 200] }
+            }
+          },
+          {
+            urlPattern: ({ url }) => url.hostname.includes('supabase.co'),
+            handler: 'NetworkFirst',
+            options: {
+              cacheName: 'supabase-api-cache',
+              expiration: { maxEntries: 50, maxAgeSeconds: 60 * 60 * 24 },
+              networkTimeoutSeconds: 10
             }
           }
-        ]
-      },
+        ],
+        cleanupOutdatedCaches: true,
+        skipWaiting: true,
+        clientsClaim: true
+      }
     })
   ],
+  build: {
+    outDir: 'dist',
+    sourcemap: false,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'react-vendor': ['react', 'react-dom'],
+          'supabase-vendor': ['@supabase/supabase-js']
+        }
+      }
+    }
+  }
 })
