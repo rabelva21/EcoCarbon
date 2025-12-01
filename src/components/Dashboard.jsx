@@ -63,9 +63,8 @@ const isThisMonth = (dateString) => {
 // 3. SUB-COMPONENTS
 // ==========================================
 
-// --- HALAMAN 1: BERANDA (PERBAIKAN LAYOUT MOBILE) ---
+// --- HALAMAN 1: BERANDA ---
 const HomeView = ({ activities, activityType, setActivityType, inputValue, setInputValue, calculatedEmission, loading, handleSubmit, handleEdit, handleDelete, isEditing, cancelEdit, onViewDetail }) => {
-  
   const stats = useMemo(() => {
     let daily = 0; let monthly = 0; let total = 0;
     activities.forEach(item => {
@@ -80,8 +79,6 @@ const HomeView = ({ activities, activityType, setActivityType, inputValue, setIn
   return (
     <motion.div initial="initial" animate="in" exit="out" variants={pageVariants} transition={pageTransition} className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start pb-24">
       <div className="lg:col-span-2 space-y-8">
-        
-        {/* STATISTIK 3 GRID */}
         <div>
             <h3 className="text-xl font-bold text-slate-800 mb-4 flex items-center gap-2">📊 Statistik Emisi</h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -97,13 +94,12 @@ const HomeView = ({ activities, activityType, setActivityType, inputValue, setIn
                 </div>
                 <div className="bg-gradient-to-br from-violet-400 to-purple-500 rounded-[2rem] p-6 text-white shadow-lg relative overflow-hidden">
                     <div className="absolute -right-4 -top-4 opacity-20"><Icons.Fire /></div>
-                    <p className="text-violet-100 text-sm font-bold mb-1">Total Sepanjang Masa</p>
+                    <p className="text-violet-100 text-sm font-bold mb-1">Total</p>
                     <p className="text-3xl font-black">{stats.total.toFixed(1)} <span className="text-sm font-normal opacity-80">kg</span></p>
                 </div>
             </div>
         </div>
 
-        {/* LIST RIWAYAT - PERBAIKAN TOMBOL DELETE */}
         <div>
           <h3 className="text-xl font-bold text-slate-800 mb-4 flex items-center gap-2">📝 Riwayat Aktivitas</h3>
           {activities.length === 0 ? (
@@ -111,7 +107,7 @@ const HomeView = ({ activities, activityType, setActivityType, inputValue, setIn
               <p className="text-slate-500 font-medium">Belum ada data aktivitas.</p>
             </div>
           ) : (
-            <div className="grid gap-4">
+            <div className="grid gap-3 pb-24">
               <AnimatePresence>
               {activities.map((item) => (
                 <motion.div 
@@ -120,9 +116,9 @@ const HomeView = ({ activities, activityType, setActivityType, inputValue, setIn
                     initial={{ opacity: 0, x: -20 }} 
                     animate={{ opacity: 1, x: 0 }} 
                     exit={{ opacity: 0, height: 0 }} 
-                    className="group relative flex flex-col sm:flex-row justify-between items-start sm:items-center p-5 rounded-2xl bg-white/80 border border-white shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer gap-4"
+                    className="group relative flex flex-col justify-between p-5 rounded-2xl bg-white/80 border border-white shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer gap-4"
                 >
-                  <div className="flex items-center gap-4 w-full sm:w-auto">
+                  <div className="flex items-center gap-4">
                     <div className="p-3 rounded-2xl bg-emerald-50 text-emerald-600 shadow-sm shrink-0"><Icons.Fire /></div>
                     <div className="min-w-0 flex-1">
                       <h4 className="font-bold text-lg text-slate-700 truncate">{item.activity}</h4>
@@ -130,12 +126,15 @@ const HomeView = ({ activities, activityType, setActivityType, inputValue, setIn
                     </div>
                   </div>
                   
-                  {/* PERBAIKAN: Layout tombol agar aman di HP */}
-                  <div className="flex items-center justify-between w-full sm:w-auto gap-4 pl-0 sm:pl-4 sm:border-l border-slate-100">
+                  <div className="flex items-center justify-between w-full pt-3 border-t border-slate-100 mt-1">
                     <span className="font-extrabold text-xl text-slate-700">{item.amount} <span className="text-sm font-normal text-slate-400">kg</span></span>
                     <div className="flex gap-2">
-                      <button onClick={(e) => { e.stopPropagation(); handleEdit(item); }} className="p-2 bg-amber-50 text-amber-500 hover:bg-amber-100 rounded-xl transition-colors"><Icons.Pencil /></button>
-                      <button onClick={(e) => { e.stopPropagation(); handleDelete(item.id); }} className="p-2 bg-red-50 text-red-500 hover:bg-red-100 rounded-xl transition-colors"><Icons.Trash /></button>
+                      <button onClick={(e) => { e.stopPropagation(); handleEdit(item); }} className="px-3 py-2 bg-amber-50 text-amber-500 hover:bg-amber-100 rounded-xl text-sm font-bold flex items-center gap-1 transition-colors">
+                        <Icons.Pencil /> Edit
+                      </button>
+                      <button onClick={(e) => { e.stopPropagation(); handleDelete(item.id); }} className="px-3 py-2 bg-red-50 text-red-500 hover:bg-red-100 rounded-xl text-sm font-bold flex items-center gap-1 transition-colors">
+                        <Icons.Trash /> Hapus
+                      </button>
                     </div>
                   </div>
                 </motion.div>
@@ -146,7 +145,6 @@ const HomeView = ({ activities, activityType, setActivityType, inputValue, setIn
         </div>
       </div>
 
-      {/* FORM INPUT */}
       <div className="lg:col-span-1 space-y-6">
         <div className={`p-8 rounded-[2.5rem] border shadow-2xl transition-all duration-500 ${isEditing ? 'bg-amber-50 border-amber-200' : 'bg-white border-white/50'}`}>
           <div className="flex items-center justify-between mb-6">
@@ -165,7 +163,7 @@ const HomeView = ({ activities, activityType, setActivityType, inputValue, setIn
               </div>
             </div>
             <div className="space-y-2">
-              <label className="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">{activityType === 'manual' ? 'Jumlah Emisi (kg CO2)' : `Jarak / Jumlah (${EMISSION_FACTORS[activityType].unit})`}</label>
+              <label className="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">{activityType === 'manual' ? 'Emisi (kg)' : `Jumlah (${EMISSION_FACTORS[activityType].unit})`}</label>
               <input type="number" placeholder="0" className="w-full px-5 py-4 rounded-2xl bg-slate-50 border-2 border-transparent focus:bg-white focus:border-emerald-400 outline-none font-bold text-xl text-slate-800" value={inputValue} onChange={(e) => setInputValue(e.target.value)} />
             </div>
             {!isEditing && activityType !== 'manual' && (
@@ -189,37 +187,19 @@ const ActivityDetailView = ({ activity, onBack }) => {
             <button onClick={onBack} className="flex items-center gap-2 text-slate-500 hover:text-slate-800 font-bold mb-6 transition-colors">
                 <Icons.ArrowLeft /> Kembali
             </button>
-            
             <div className="bg-white rounded-[2.5rem] shadow-xl border border-slate-100 overflow-hidden">
-                <div className="bg-slate-900 p-8 text-white relative overflow-hidden">
+                <div className="bg-slate-900 p-8 text-white relative">
                     <div className="absolute top-0 right-0 p-8 opacity-10 scale-[2]"><Icons.Fire /></div>
-                    <p className="text-slate-400 font-bold uppercase tracking-widest text-xs mb-2">Detail Aktivitas</p>
-                    <h2 className="text-3xl font-bold">{activity.activity}</h2>
-                    <p className="mt-2 opacity-80">{new Date(activity.created_at).toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
+                    <p className="text-slate-400 font-bold uppercase text-xs mb-2">Detail Aktivitas</p>
+                    <h2 className="text-2xl font-bold">{activity.activity}</h2>
+                    <p className="mt-2 opacity-80 text-sm">{new Date(activity.created_at).toLocaleDateString()}</p>
                 </div>
-                <div className="p-6 md:p-8">
-                    <div className="grid grid-cols-2 gap-4 mb-8">
-                        <div className="bg-emerald-50 p-5 rounded-3xl border border-emerald-100 text-center">
-                            <p className="text-emerald-600 font-bold text-xs uppercase mb-1">Jumlah Emisi</p>
-                            <p className="text-2xl font-black text-emerald-800">{activity.amount} <span className="text-sm font-normal">kg</span></p>
-                        </div>
-                        <div className="bg-blue-50 p-5 rounded-3xl border border-blue-100 text-center">
-                            <p className="text-blue-600 font-bold text-xs uppercase mb-1">Dampak</p>
-                            <p className="text-lg font-bold text-blue-800">{activity.amount > 5 ? "Tinggi ⚠️" : "Rendah ✅"}</p>
-                        </div>
+                <div className="p-6">
+                    <div className="grid grid-cols-2 gap-4 mb-6">
+                        <div className="bg-emerald-50 p-4 rounded-2xl text-center"><p className="text-xs font-bold text-emerald-600 mb-1">Emisi</p><p className="text-2xl font-black text-emerald-800">{activity.amount} kg</p></div>
+                        <div className="bg-blue-50 p-4 rounded-2xl text-center"><p className="text-xs font-bold text-blue-600 mb-1">Dampak</p><p className="text-lg font-bold text-blue-800">{activity.amount > 5 ? "Tinggi ⚠️" : "Rendah ✅"}</p></div>
                     </div>
-                    
-                    <h3 className="font-bold text-slate-800 mb-2">Analisis Lingkungan</h3>
-                    <p className="text-slate-600 leading-relaxed text-sm mb-4">
-                        Aktivitas ini menyumbang sebanyak <strong>{activity.amount} kg CO₂</strong> ke atmosfer. 
-                        {activity.amount > 5 
-                            ? " Angka ini cukup tinggi. Cobalah mencari alternatif yang lebih ramah lingkungan lain kali." 
-                            : " Angka ini tergolong rendah. Terima kasih sudah menjaga bumi!"}
-                    </p>
-                    <div className="bg-slate-100 p-4 rounded-xl text-xs text-slate-500 font-mono">
-                        ID Transaksi: {activity.id}<br/>
-                        Waktu Input: {new Date(activity.created_at).toLocaleTimeString()}
-                    </div>
+                    <p className="text-slate-600 text-sm leading-relaxed">Aktivitas ini menyumbang <strong>{activity.amount} kg CO₂</strong>. {activity.amount > 5 ? "Kurangi frekuensinya ya!" : "Bagus, pertahankan!"}</p>
                 </div>
             </div>
         </motion.div>
@@ -230,33 +210,24 @@ const ActivityDetailView = ({ activity, onBack }) => {
 const ForestView = ({ activities }) => {
   const monthlyEmission = useMemo(() => {
     try {
-      return (activities || [])
-        .filter(item => item && item.created_at && isThisMonth(item.created_at))
-        .reduce((acc, curr) => acc + (parseFloat(curr.amount) || 0), 0);
+      return (activities || []).filter(item => item && item.created_at && isThisMonth(item.created_at)).reduce((acc, curr) => acc + (parseFloat(curr.amount) || 0), 0);
     } catch (err) { return 0; }
   }, [activities]);
-
-  const maxTrees = 20;
-  const treeCount = Math.max(1, maxTrees - Math.floor(monthlyEmission));
-  const trees = Array.from({ length: treeCount });
-  
+  const treeCount = Math.max(1, 20 - Math.floor(monthlyEmission));
   return (
-    <motion.div initial="initial" animate="in" exit="out" variants={pageVariants} className="text-center pb-24">
-      <div className="relative rounded-[3rem] shadow-2xl overflow-hidden min-h-[500px] md:min-h-[600px] flex flex-col justify-end border-4 border-white bg-slate-800">
+    <motion.div initial="initial" animate="in" exit="out" variants={pageVariants} className="text-center pb-32">
+      <div className="relative rounded-[3rem] shadow-2xl overflow-hidden min-h-[500px] flex flex-col justify-end border-4 border-white bg-slate-800">
         <div className="absolute inset-0 z-0">
-            <img src="https://images.unsplash.com/photo-1511497584788-876760111969?q=80&w=2670&auto=format&fit=crop" alt="Forest Art Background" className="w-full h-full object-cover opacity-80"/>
-            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-black/40"></div>
+            <img src="https://images.unsplash.com/photo-1511497584788-876760111969?q=80&w=2670&auto=format&fit=crop" alt="Forest Art" className="w-full h-full object-cover opacity-80"/>
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-slate-800"></div>
         </div>
-        <div className="relative z-10 p-8 md:p-10 mb-auto mt-10">
-            <h2 className="text-3xl font-extrabold text-white mb-2 drop-shadow-lg filter shadow-black">🌲 Hutan Bulan Ini</h2>
-            <p className="text-white text-lg font-medium drop-shadow-md">Emisi Bulan Ini: <span className="font-bold text-yellow-300">{monthlyEmission.toFixed(2)} kg</span></p>
-            <p className="text-white/80 text-sm mt-1">Hutan akan kembali lebat (20 pohon) saat bulan berganti.</p>
+        <div className="relative z-10 p-8 mb-auto mt-10">
+            <h2 className="text-3xl font-extrabold text-white mb-2">🌲 Hutan Bulan Ini</h2>
+            <p className="text-white text-lg font-medium">Emisi: <span className="font-bold text-yellow-300">{monthlyEmission.toFixed(2)} kg</span></p>
         </div>
         <div className="relative z-10 px-6 pb-12 flex flex-wrap justify-center items-end gap-[-10px]">
-          {trees.map((_, i) => (
-            <motion.div key={i} initial={{ scale: 0, y: 100 }} animate={{ scale: 1, y: 0 }} transition={{ delay: i * 0.05, type: "spring", stiffness: 200 }} className="text-emerald-300 w-16 h-16 sm:w-24 sm:h-24 filter drop-shadow-[0_10px_10px_rgba(0,0,0,0.5)] -ml-4 hover:scale-110 transition-transform">
-                <Icons.TreeSolid />
-            </motion.div>
+          {Array.from({ length: treeCount }).map((_, i) => (
+            <motion.div key={i} initial={{ scale: 0, y: 100 }} animate={{ scale: 1, y: 0 }} transition={{ delay: i * 0.05 }} className="text-emerald-400 w-16 h-16"><Icons.TreeSolid /></motion.div>
           ))}
         </div>
       </div>
@@ -271,136 +242,77 @@ const LeaderboardView = ({ session, onViewUser }) => {
   const [loadingLB, setLoadingLB] = useState(false);
 
   useEffect(() => {
-    const fetchGlobalLeaderboard = async () => {
+    const fetch = async () => {
       setLoadingLB(true);
-      const { data, error } = await supabase.from("footprints").select("*");
-      
-      if (error) { console.error("Error fetching leaderboard:", error); setLoadingLB(false); return; }
-
-      const groupedData = {};
-      data.forEach(item => {
-        const uid = item.user_id;
-        const amount = parseFloat(item.amount) || 0;
-        const displayName = item.user_name && item.user_name !== "Anonymous" ? item.user_name : "Anonymous";
-        const displayAvatar = item.avatar_url ? item.avatar_url : null;
-
-        if (!groupedData[uid]) {
-          groupedData[uid] = { id: uid, name: displayName, avatar: displayAvatar, total: 0, daily: 0, monthly: 0 };
-        }
-        // Always update with the latest non-Anonymous name found
-        if (displayName !== "Anonymous") groupedData[uid].name = displayName;
-        if (displayAvatar) groupedData[uid].avatar = displayAvatar;
-
-        groupedData[uid].total += amount;
-        if (isToday(item.created_at)) groupedData[uid].daily += amount;
-        if (isThisMonth(item.created_at)) groupedData[uid].monthly += amount;
-      });
-
-      const result = Object.values(groupedData).map(u => ({
-        id: u.id, name: u.name, avatar: u.avatar, score: u[filter], monthly: u.monthly, total: u.total, isMe: u.id === session.user.id
-      }));
-
-      result.sort((a, b) => a.score - b.score);
-      setLeaderboardData(result);
+      const { data } = await supabase.from("footprints").select("*");
+      if (data) {
+        const grouped = {};
+        data.forEach(item => {
+          const uid = item.user_id;
+          const val = parseFloat(item.amount) || 0;
+          if (!grouped[uid]) grouped[uid] = { id: uid, name: item.user_name || "Anonymous", avatar: item.avatar_url, total: 0, daily: 0, monthly: 0 };
+          if (item.user_name && item.user_name !== "Anonymous") grouped[uid].name = item.user_name;
+          if (item.avatar_url) grouped[uid].avatar = item.avatar_url;
+          grouped[uid].total += val;
+          if (isToday(item.created_at)) grouped[uid].daily += val;
+          if (isThisMonth(item.created_at)) grouped[uid].monthly += val;
+        });
+        setLeaderboardData(Object.values(grouped).map(u => ({ ...u, score: u[filter], monthly: u.monthly, total: u.total, isMe: u.id === session.user.id })).sort((a, b) => a.score - b.score));
+      }
       setLoadingLB(false);
     };
-    fetchGlobalLeaderboard();
+    fetch();
   }, [filter, session.user.id]);
-
-  const rankColors = ["bg-yellow-100 border-yellow-300", "bg-gray-100 border-gray-300", "bg-orange-100 border-orange-300", "bg-white border-slate-100"];
 
   return (
     <motion.div initial="initial" animate="in" exit="out" variants={pageVariants} className="max-w-3xl mx-auto pb-24">
-      <div className="bg-gradient-to-r from-violet-600 to-indigo-600 rounded-[2.5rem] p-8 text-white shadow-2xl mb-8 text-center relative overflow-hidden">
-        <h2 className="text-2xl font-extrabold mb-2 relative z-10">🏆 Peringkat Pahlawan</h2>
-        <p className="text-violet-100 relative z-10 mb-6 text-sm md:text-base">Semakin rendah emisimu, semakin tinggi peringkatmu!</p>
-        <div className="inline-flex bg-black/20 p-1 rounded-full relative z-10 backdrop-blur-sm">
-            {['daily', 'monthly', 'total'].map((type) => (
-                <button key={type} onClick={() => setFilter(type)} className={`px-4 md:px-6 py-2 rounded-full text-xs md:text-sm font-bold transition-all ${filter === type ? 'bg-white text-indigo-600 shadow-md' : 'text-white/70 hover:text-white hover:bg-white/10'}`}>
-                    {type === 'daily' ? 'Harian' : type === 'monthly' ? 'Bulanan' : 'Total'}
-                </button>
-            ))}
-        </div>
+      <div className="bg-gradient-to-r from-violet-600 to-indigo-600 rounded-[2.5rem] p-8 text-white shadow-2xl mb-6 text-center">
+        <h2 className="text-2xl font-extrabold mb-4">🏆 Peringkat</h2>
+        <div className="inline-flex bg-black/20 p-1 rounded-full">{['daily', 'monthly', 'total'].map(t => <button key={t} onClick={() => setFilter(t)} className={`px-4 py-2 rounded-full text-xs font-bold ${filter === t ? 'bg-white text-indigo-600' : 'text-white/70'}`}>{t}</button>)}</div>
       </div>
-
-      <div className="space-y-4">
-        {loadingLB ? <div className="text-center py-10 text-slate-400">Memuat peringkat...</div> : 
-         leaderboardData.length === 0 ? <div className="text-center py-10 text-slate-400">Belum ada data peringkat.</div> : 
-         leaderboardData.map((user, index) => {
-            const colorClass = rankColors[index] || rankColors[3]; 
-            return (
-            <motion.div 
-                layout key={user.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-                onClick={() => onViewUser(user)}
-                className={`flex items-center justify-between p-4 rounded-2xl border-2 ${colorClass} shadow-sm cursor-pointer hover:scale-[1.02] transition-transform ${user.isMe ? 'ring-2 ring-indigo-500 ring-offset-2' : ''}`}
-            >
+      <div className="space-y-3">
+        {loadingLB ? <p className="text-center text-slate-400">Loading...</p> : leaderboardData.map((user, idx) => (
+            <div key={user.id} onClick={() => onViewUser(user)} className={`flex items-center justify-between p-4 rounded-2xl border-2 ${idx < 3 ? 'bg-yellow-50 border-yellow-200' : 'bg-white border-slate-100'} cursor-pointer hover:scale-[1.01] transition-transform`}>
                 <div className="flex items-center gap-3">
-                <div className="font-black text-lg w-6 text-center text-slate-400">{index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : index + 1}</div>
-                <div className="w-10 h-10 flex-shrink-0 flex items-center justify-center rounded-full bg-white overflow-hidden border-2 border-white shadow-sm">
-                    {user.avatar ? <img src={user.avatar} alt="avatar" className="w-full h-full object-cover" /> : <span className="text-xl">👤</span>}
+                    <span className="font-bold text-slate-400 w-6 text-center">{idx + 1}</span>
+                    <div className="w-10 h-10 rounded-full bg-slate-200 overflow-hidden">{user.avatar ? <img src={user.avatar} className="w-full h-full object-cover"/> : <span className="flex items-center justify-center h-full">👤</span>}</div>
+                    <div><p className="font-bold text-sm text-slate-700 truncate max-w-[120px]">{user.name}</p>{user.isMe && <span className="text-[10px] bg-indigo-100 text-indigo-600 px-2 rounded-full">You</span>}</div>
                 </div>
-                <div className="flex flex-col">
-                    <span className="font-bold text-sm text-slate-700 truncate max-w-[100px]">{user.name}</span>
-                    {user.isMe && <span className="text-[9px] font-bold text-indigo-500 bg-indigo-50 px-2 rounded-full w-fit">It's You!</span>}
-                </div>
-                </div>
-                <div className="font-mono font-bold text-lg text-slate-700">{user.score.toFixed(2)} <span className="text-xs font-normal opacity-70">kg</span></div>
-            </motion.div>
-            )})
-        }
+                <span className="font-mono font-bold text-lg text-slate-700">{user.score.toFixed(1)}</span>
+            </div>
+        ))}
       </div>
     </motion.div>
   );
 };
 
-// --- HALAMAN DETAIL USER (KETIKA KLIK LEADERBOARD) ---
-const UserDetailView = ({ user, onBack }) => {
-    return (
-        <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="max-w-md mx-auto pb-24">
-            <button onClick={onBack} className="flex items-center gap-2 text-slate-500 hover:text-slate-800 font-bold mb-6 transition-colors">
-                <Icons.ArrowLeft /> Kembali
-            </button>
+const UserDetailView = ({ user, onBack }) => (
+    <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="max-w-md mx-auto pb-32">
+        <button onClick={onBack} className="flex items-center gap-2 text-slate-500 font-bold mb-6"><Icons.ArrowLeft /> Kembali</button>
+        <div className="bg-white rounded-[3rem] shadow-xl p-8 text-center border border-slate-100">
+            <div className="w-24 h-24 mx-auto bg-slate-100 rounded-full mb-4 overflow-hidden">{user.avatar ? <img src={user.avatar} className="w-full h-full object-cover"/> : <span className="text-4xl leading-[6rem]">👤</span>}</div>
+            <h2 className="text-2xl font-black text-slate-800">{user.name}</h2>
             
-            <div className="bg-white rounded-[3rem] shadow-2xl p-8 text-center border border-slate-100">
-                <div className="w-28 h-28 mx-auto bg-slate-100 rounded-full mb-4 flex items-center justify-center overflow-hidden border-4 border-emerald-100 shadow-lg">
-                    {user.avatar ? <img src={user.avatar} alt="avatar" className="w-full h-full object-cover" /> : <span className="text-5xl">👤</span>}
-                </div>
-                <h2 className="text-2xl font-black text-slate-800">{user.name}</h2>
-                
-                {/* DETAIL DESKRIPSI BARU */}
-                <div className="mt-6 bg-slate-50 p-4 rounded-2xl text-sm text-slate-600 leading-relaxed border border-slate-100 text-left">
-                    <p>
-                       Halo! <strong>{user.name}</strong> adalah salah satu pahlawan bumi. 
-                       Pada bulan ini, ia telah menghasilkan jejak karbon sebesar <span className="font-bold text-emerald-600">{user.monthly.toFixed(2)} kg</span>.
-                       Secara total, kontribusinya tercatat sebesar <strong>{user.total.toFixed(2)} kg</strong>.
-                    </p>
-                </div>
-
-                <div className="mt-6 grid grid-cols-2 gap-4">
-                    <div className="bg-blue-50 p-4 rounded-2xl border border-blue-100">
-                        <p className="text-xs text-blue-400 font-bold uppercase">Total Skor</p>
-                        <p className="text-xl font-black text-blue-800">{user.total.toFixed(1)}</p>
-                    </div>
-                    <div className="bg-emerald-50 p-4 rounded-2xl border border-emerald-100">
-                        <p className="text-xs text-emerald-400 font-bold uppercase">Status</p>
-                        <p className="text-xl font-black text-emerald-800">{user.total < 10 ? "🌱 Aman" : "⚠️ Tinggi"}</p>
-                    </div>
-                </div>
+            <div className="mt-6 bg-slate-50 p-4 rounded-2xl text-sm text-slate-600 leading-relaxed border border-slate-100 text-left">
+                <p>Halo! <strong>{user.name}</strong> adalah salah satu pahlawan bumi.</p>
+                <ul className="list-disc ml-4 mt-2 space-y-1">
+                    <li>Emisi Bulan Ini: <strong className="text-emerald-600">{user.monthly?.toFixed(2) || 0} kg</strong></li>
+                    <li>Total Kontribusi: <strong className="text-indigo-600">{user.total?.toFixed(2) || 0} kg</strong></li>
+                </ul>
             </div>
-        </motion.div>
-    )
-}
+        </div>
+    </motion.div>
+);
 
-// --- HALAMAN 4: PROFIL (DENGAN TOMBOL LOGOUT) ---
 const ProfileView = ({ session, totalEmission, onLogout }) => {
-  const userMetadata = session.user.user_metadata || {};
-  const [isEditMode, setIsEditMode] = useState(false);
-  const [username, setUsername] = useState(userMetadata.user_name || userMetadata.full_name || 'Anonymous');
-  const [avatarUrl, setAvatarUrl] = useState(userMetadata.avatar_url || null);
+  const [username, setUsername] = useState(session.user.user_metadata.user_name || 'Anonymous');
+  const [avatarUrl, setAvatarUrl] = useState(session.user.user_metadata.avatar_url || null);
+  const [isEdit, setIsEdit] = useState(false); 
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
   const joinDate = new Date(session.user.created_at).toLocaleDateString('id-ID', { month: 'long', year: 'numeric' });
 
+  // --- FITUR UPLOAD FOTO YANG HILANG DIKEMBALIKAN ---
   const uploadAvatar = async (event) => {
     try {
       setUploading(true);
@@ -413,272 +325,206 @@ const ProfileView = ({ session, totalEmission, onLogout }) => {
       setAvatarUrl(data.publicUrl); 
     } catch (error) { alert("Gagal upload: " + error.message); } finally { setUploading(false); }
   };
+  // ----------------------------------------------------
 
-  const handleUpdateProfile = async (e) => {
-    e.preventDefault();
-    setLoading(true);
+  const handleSave = async (e) => {
+    e.preventDefault(); setLoading(true);
     const { error: authError } = await supabase.auth.updateUser({ data: { user_name: username, avatar_url: avatarUrl } });
     if (authError) { alert("Gagal update auth: " + authError.message); setLoading(false); return; }
     const { error: dbError } = await supabase.from('footprints').update({ user_name: username, avatar_url: avatarUrl }).eq('user_id', session.user.id);
-    setLoading(false);
-    if (dbError) { console.error("Gagal sinkronisasi data footprints:", dbError); alert("Profil terupdate tapi data lama mungkin belum berubah."); } else { alert("Profil & Data Peringkat berhasil diperbarui!"); setIsEditMode(false); window.location.reload(); }
+    setLoading(false); setIsEdit(false); alert("Profil diperbarui!"); window.location.reload();
   };
 
   return (
-    <motion.div initial="initial" animate="in" exit="out" variants={pageVariants} className="max-w-2xl mx-auto pb-24">
-      <div className="bg-white rounded-[3rem] shadow-xl p-8 border border-slate-100 relative overflow-hidden">
-        <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-r from-emerald-400 to-teal-400"></div>
-        <div className="relative z-10 flex flex-col items-center mt-12">
-          <div className="relative group">
-            <div className="w-28 h-28 mx-auto bg-white p-1 rounded-full shadow-lg mb-4 flex items-center justify-center overflow-hidden border-4 border-white">
-              {avatarUrl ? <img src={avatarUrl} alt="Avatar" className="w-full h-full object-cover rounded-full" /> : <span className="text-4xl">😎</span>}
+    <motion.div initial="initial" animate="in" exit="out" variants={pageVariants} className="max-w-2xl mx-auto pb-32">
+      <div className="bg-white rounded-[3rem] shadow-xl p-6 md:p-8 relative overflow-hidden text-center">
+        <div className="absolute top-0 left-0 w-full h-24 bg-gradient-to-r from-emerald-400 to-teal-400"></div>
+        <div className="relative z-10 mt-8">
+            <div className="relative group mx-auto w-28">
+                <div className="w-28 h-28 bg-white p-1 rounded-full shadow-lg mb-4 overflow-hidden border-4 border-white">
+                    {avatarUrl ? <img src={avatarUrl} className="w-full h-full object-cover rounded-full"/> : <span className="text-5xl leading-[6rem]">😎</span>}
+                </div>
+                {/* TOMBOL UPLOAD DIKEMBALIKAN */}
+                {isEdit && (
+                  <label className="absolute bottom-4 right-0 bg-slate-800 text-white p-3 rounded-full cursor-pointer hover:bg-slate-700 shadow-md transition-all">
+                    {uploading ? <span className="block w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></span> : <Icons.Pencil />}
+                    <input type="file" accept="image/*" onChange={uploadAvatar} disabled={uploading} className="hidden" />
+                  </label>
+                )}
             </div>
-            {isEditMode && (
-              <label className="absolute bottom-4 right-0 bg-slate-800 text-white p-3 rounded-full cursor-pointer hover:bg-slate-700 shadow-md transition-all">
-                {uploading ? <span className="block w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></span> : <Icons.Pencil />}
-                <input type="file" accept="image/*" onChange={uploadAvatar} disabled={uploading} className="hidden" />
-              </label>
-            )}
-          </div>
-          {isEditMode ? (
-            <form onSubmit={handleUpdateProfile} className="w-full max-w-sm mt-4 space-y-4">
-              <div><input type="text" value={username} onChange={(e) => setUsername(e.target.value)} className="w-full text-center text-2xl font-bold px-4 py-3 border-2 rounded-2xl focus:border-emerald-500 bg-slate-50 mt-1" required /></div>
-              <div className="flex justify-center gap-3 pt-2">
-                <button type="submit" disabled={loading || uploading} className="bg-emerald-500 text-white font-bold py-3 px-6 rounded-xl hover:bg-emerald-600 disabled:opacity-50 transition shadow-lg">{loading ? '...' : 'Simpan'}</button>
-                <button type="button" onClick={() => setIsEditMode(false)} className="bg-slate-200 text-slate-700 font-bold py-3 px-6 rounded-xl hover:bg-slate-300 transition">Batal</button>
-              </div>
-            </form>
-          ) : (
-            <>
-              <h2 className="text-2xl font-black text-slate-800 mt-2">{username}</h2>
-              <span className="bg-emerald-100 text-emerald-700 px-4 py-1.5 rounded-full text-xs font-bold mt-3 tracking-wide">Pahlawan Lingkungan</span>
-              <button onClick={() => setIsEditMode(true)} className="mt-6 text-xs text-blue-600 hover:text-blue-800 font-bold flex items-center justify-center gap-2 bg-blue-50 px-5 py-2.5 rounded-full transition"><Icons.Pencil /> Edit Profil</button>
-            </>
-          )}
-        </div>
 
-        {/* DESKRIPSI PROFIL BARU */}
-        <div className="mt-10 space-y-4">
-            <div className="bg-slate-50 p-5 rounded-3xl border border-slate-100">
-                <h4 className="font-bold text-slate-700 mb-2 flex items-center gap-2">📊 Ringkasan Kamu</h4>
+            {isEdit ? <form onSubmit={handleSave} className="flex gap-2 justify-center mt-4"><input value={username} onChange={e=>setUsername(e.target.value)} className="border p-2 rounded-lg"/><button disabled={loading} className="bg-emerald-500 text-white p-2 rounded-lg">Save</button></form> 
+            : <><h2 className="text-2xl font-black">{username}</h2><button onClick={() => setIsEdit(true)} className="text-xs text-blue-500 font-bold mt-1">Edit Profil</button></>}
+        </div>
+        
+        <div className="mt-8 space-y-3 text-left">
+            <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                <h4 className="font-bold text-slate-700 mb-2 flex items-center gap-2">📊 Ringkasan</h4>
                 <p className="text-sm text-slate-600 leading-relaxed">
                     Halo <strong>{username}</strong>! Kamu bergabung sejak <strong>{joinDate}</strong>. 
-                    Sejauh ini, kamu telah mencatat emisi sebesar <span className="font-bold text-emerald-600">{totalEmission} kg</span>.
-                    Terus kurangi jejak karbonmu! 🌱
+                    Total jejak karbon yang tercatat adalah <span className="font-bold text-emerald-600">{totalEmission} kg</span>.
                 </p>
             </div>
-            <div className="bg-slate-50 p-5 rounded-3xl border border-slate-100">
-                <p className="text-slate-400 text-xs font-bold uppercase mb-1">Email Terdaftar</p>
-                <p className="text-sm font-bold text-slate-700 break-all">{session.user.email}</p>
-            </div>
+            <div className="bg-slate-50 p-4 rounded-2xl"><p className="text-xs font-bold text-slate-400 uppercase">Email</p><p className="text-sm font-bold truncate">{session.user.email}</p></div>
         </div>
-
-        <div className="mt-10 pt-6 border-t border-slate-100">
-            <button onClick={onLogout} className="w-full bg-red-50 text-red-500 hover:bg-red-100 hover:text-red-600 font-bold py-4 rounded-2xl flex items-center justify-center gap-2 transition-all">
-                <Icons.LogOut /> Keluar
-            </button>
-        </div>
+        <button onClick={onLogout} className="mt-8 w-full bg-red-50 text-red-500 font-bold py-3 rounded-2xl flex justify-center gap-2"><Icons.LogOut /> Keluar</button>
       </div>
     </motion.div>
   );
 };
 
-// --- HALAMAN 5: TENTANG APLIKASI (About) ---
 const AboutView = () => (
-    <motion.div initial="initial" animate="in" exit="out" variants={pageVariants} className="max-w-2xl mx-auto pb-24">
-        <div className="bg-white rounded-[2.5rem] shadow-xl p-8 border border-slate-100 text-center">
-            <div className="w-20 h-20 bg-gradient-to-tr from-emerald-500 to-teal-500 rounded-3xl flex items-center justify-center text-white mx-auto mb-6 shadow-lg shadow-emerald-200">
-                <Icons.Leaf />
-            </div>
-            <h2 className="text-2xl font-black text-slate-800 mb-2">EcoCarbon</h2>
-            <p className="text-slate-500 font-medium text-sm">Versi 1.0.0 (Tugas Akhir PWA)</p>
-            
-            <div className="mt-8 text-left space-y-4">
-                <div className="bg-slate-50 p-5 rounded-2xl border border-slate-100">
-                    <h3 className="font-bold text-slate-800 mb-2">Tentang Aplikasi</h3>
-                    <p className="text-sm text-slate-600 leading-relaxed">
-                        EcoCarbon adalah aplikasi pelacak jejak karbon pribadi berbasis PWA. Aplikasi ini membantu pengguna menghitung dan mengurangi emisi karbon harian melalui gamifikasi.
-                    </p>
-                </div>
-                <div className="bg-slate-50 p-5 rounded-2xl border border-slate-100">
-                    <h3 className="font-bold text-slate-800 mb-2">Pengembang</h3>
-                    <p className="text-sm text-slate-600">
-                        Nama: <strong>Rabelva Evan Ligar (21120123140161)</strong><br/>
-                        Teknologi: React, Vite, Tailwind CSS, Supabase
-                    </p>
-                </div>
-            </div>
-            <p className="mt-10 text-xs text-slate-400">© 2025 EcoCarbon Project</p>
-        </div>
-    </motion.div>
+    <motion.div initial="initial" animate="in" exit="out" variants={pageVariants} className="max-w-2xl mx-auto pb-32 text-center">
+        <div className="bg-white rounded-[2.5rem] shadow-xl p-8 border border-slate-100">
+            <h2 className="text-2xl font-black mb-2">EcoCarbon</h2>
+            <p className="text-slate-500 text-sm mb-6">Aplikasi Jejak Karbon PWA</p>
+            <div className="text-left bg-slate-50 p-5 rounded-2xl text-sm text-slate-600">
+                <div className="bg-slate-50 p-5 rounded-2xl border border-slate-100">
+                    <h3 className="font-bold text-slate-800 mb-2">Tentang Aplikasi</h3>
+                    <p className="text-sm text-slate-600 leading-relaxed">
+                        EcoCarbon adalah aplikasi pelacak jejak karbon pribadi berbasis Progressive Web Apps (PWA). 
+                        Aplikasi ini membantu pengguna menghitung, memantau, dan mengurangi emisi karbon harian mereka 
+                        melalui gamifikasi hutan virtual dan kompetisi peringkat.
+                    </p>
+                </div>
+                <div className="bg-slate-50 p-5 rounded-2xl border border-slate-100">
+                    <h3 className="font-bold text-slate-800 mb-2">Pengembang</h3>
+                    <p className="text-sm text-slate-600">
+                        Nama: <strong>Rabelva Evan Ligar (21120123140161)</strong><br/>
+                        Teknologi: React, Vite, Tailwind CSS, Supabase
+                    </p>
+                </div>
+            </div>
+            <p className="mt-10 text-xs text-slate-400">© 2025 EcoCarbon Project</p>
+        </div>
+    </motion.div>
 );
 
 // ==========================================
 // 4. MAIN CONTROLLER
 // ==========================================
 export default function Dashboard({ session }) {
-  const [currentPage, setCurrentPage] = useState("home");
-  const [isOffline, setIsOffline] = useState(!navigator.onLine);
+  const [currentPage, setCurrentPage] = useState("home");
+  const [isOffline, setIsOffline] = useState(!navigator.onLine);
 
-  useEffect(() => {
-    const handleOnline = () => setIsOffline(false);
-    const handleOffline = () => setIsOffline(true);
-    window.addEventListener('online', handleOnline);
-    window.addEventListener('offline', handleOffline);
-    return () => {
-      window.removeEventListener('online', handleOnline);
-      window.removeEventListener('offline', handleOffline);
-    };
-  }, []);
+  useEffect(() => {
+    const handleOnline = () => setIsOffline(false);
+    const handleOffline = () => setIsOffline(true);
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, []);
 
-  const [selectedActivity, setSelectedActivity] = useState(null);
-  const [selectedUser, setSelectedUser] = useState(null);
-  const [activities, setActivities] = useState([]);
-  const [totalEmission, setTotalEmission] = useState(0);
-  const [activityType, setActivityType] = useState("motor");
-  const [inputValue, setInputValue] = useState("");
-  const [calculatedEmission, setCalculatedEmission] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [isEditing, setIsEditing] = useState(false);
-  const [editId, setEditId] = useState(null);
+  const [selectedActivity, setSelectedActivity] = useState(null);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [activities, setActivities] = useState([]);
+  const [totalEmission, setTotalEmission] = useState(0);
+  const [activityType, setActivityType] = useState("motor");
+  const [inputValue, setInputValue] = useState("");
+  const [calculatedEmission, setCalculatedEmission] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editId, setEditId] = useState(null);
 
-  useEffect(() => {
-    if (inputValue && activityType) setCalculatedEmission((parseFloat(inputValue) * EMISSION_FACTORS[activityType].factor).toFixed(2));
-    else setCalculatedEmission("");
-  }, [inputValue, activityType]);
+  useEffect(() => {
+    if (inputValue && activityType) setCalculatedEmission((parseFloat(inputValue) * EMISSION_FACTORS[activityType].factor).toFixed(2)); else setCalculatedEmission("");
+  }, [inputValue, activityType]);
 
-  const fetchActivities = async () => {
-    const { data, error } = await supabase.from("footprints").select("*").eq("user_id", session.user.id).order("created_at", { ascending: false });
-    if (!error) {
-      setActivities(data);
-      setTotalEmission(data.reduce((acc, curr) => acc + (parseFloat(curr.amount) || 0), 0).toFixed(2));
-    }
-  };
+  const fetchActivities = async () => {
+    const { data } = await supabase.from("footprints").select("*").eq("user_id", session.user.id).order("created_at", { ascending: false });
+    if (data) { setActivities(data); setTotalEmission(data.reduce((acc, curr) => acc + (parseFloat(curr.amount) || 0), 0).toFixed(2)); }
+  };
+  useEffect(() => { fetchActivities(); }, []);
 
-  useEffect(() => { fetchActivities(); }, []);
+  const handleSubmit = async (e) => {
+    e.preventDefault(); if (!calculatedEmission) return; setLoading(true);
+    const activityName = activityType === 'manual' ? "Manual" : `${EMISSION_FACTORS[activityType].label} (${inputValue} ${EMISSION_FACTORS[activityType].unit})`;
+    const payload = { user_id: session.user.id, activity: activityName, amount: parseFloat(calculatedEmission), date: new Date().toISOString(), user_name: session.user.user_metadata.user_name || 'Anonymous', avatar_url: session.user.user_metadata.avatar_url };
+    
+    if (isEditing) await supabase.from("footprints").update(payload).eq("id", editId);
+    else await supabase.from("footprints").insert(payload);
+    
+    setLoading(false); setInputValue(""); setCalculatedEmission(""); setIsEditing(false); fetchActivities();
+    if (!isEditing) confetti({ particleCount: 50, spread: 60, origin: { y: 0.7 } });
+  };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!calculatedEmission) return;
-    setLoading(true);
-    const finalActivityName = activityType === 'manual' ? "Aktivitas Manual" : `${EMISSION_FACTORS[activityType].label} (${inputValue} ${EMISSION_FACTORS[activityType].unit})`;
-    const metadata = session.user.user_metadata || {};
-    const userName = metadata.user_name || metadata.full_name || 'Anonymous';
-    const avatarUrl = metadata.avatar_url || null;
+  const handleDelete = async (id) => { if(window.confirm("Hapus?")) { await supabase.from("footprints").delete().eq("id", id); fetchActivities(); } };
+  const handleEdit = (item) => { setIsEditing(true); setEditId(item.id); setActivityType("manual"); setInputValue(item.amount); setCalculatedEmission(item.amount); window.scrollTo({ top: 0, behavior: 'smooth' }); };
+  const cancelEdit = () => { setIsEditing(false); setEditId(null); setInputValue(""); };
+  const handleLogout = async () => { await supabase.auth.signOut(); };
 
-    if (isEditing) {
-      const { error } = await supabase.from("footprints").update({ 
-        activity: finalActivityName, amount: parseFloat(calculatedEmission), user_name: userName, avatar_url: avatarUrl
-      }).eq("id", editId);
-      if (!error) { cancelEdit(); fetchActivities(); }
-    } else {
-      const { error } = await supabase.from("footprints").insert({ 
-        user_id: session.user.id, activity: finalActivityName, amount: parseFloat(calculatedEmission), date: new Date().toISOString(), user_name: userName, avatar_url: avatarUrl
-      });
-      if (!error) { setInputValue(""); setCalculatedEmission(""); fetchActivities(); confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } }); }
-    }
-    setLoading(false);
-  };
+  const handleViewActivity = (item) => { setSelectedActivity(item); setCurrentPage('activity-detail'); };
+  const handleViewUser = (user) => { setSelectedUser(user); setCurrentPage('user-detail'); };
 
-  const handleDelete = async (id) => {
-    if(!window.confirm("Hapus data ini?")) return;
-    const { error } = await supabase.from("footprints").delete().eq("id", id);
-    if (!error) fetchActivities();
-  };
+  return (
+    <div className="min-h-screen bg-slate-50 font-sans text-slate-800 pb-0 overflow-x-hidden">
+      {isOffline && <div className="bg-red-500 text-white text-center text-xs font-bold py-2 fixed top-0 w-full z-[100]">📡 Offline Mode</div>}
+      
+      {/* HEADER DESKTOP */}
+      <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-white/50 px-6 py-4 hidden md:flex justify-between items-center">
+        <div className="flex items-center gap-2 font-black text-xl text-emerald-600"><Icons.Leaf /> EcoCarbon</div>
+        <div className="flex gap-2">
+            {['home', 'forest', 'leaderboard', 'profile', 'about'].map(id => (
+                <button key={id} onClick={() => setCurrentPage(id)} className={`px-4 py-1 rounded-full text-sm font-bold capitalize ${currentPage === id ? 'bg-emerald-100 text-emerald-700' : 'text-slate-500'}`}>{id}</button>
+            ))}
+        </div>
+        <button onClick={handleLogout} className="flex items-center gap-2 text-sm font-bold text-slate-500 hover:text-red-500 bg-slate-100 hover:bg-red-50 px-4 py-2 rounded-full transition-all"><Icons.LogOut /> Keluar</button>
+      </nav>
 
-  const handleEdit = (item) => {
-    setIsEditing(true); setEditId(item.id); setActivityType("manual"); setInputValue(item.amount); setCalculatedEmission(item.amount); window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
+      {/* MOBILE HEADER */}
+      <div className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-slate-100 px-6 py-3 flex justify-between items-center md:hidden">
+         <div className="flex items-center gap-2 font-extrabold text-lg text-emerald-600"><Icons.Leaf /> EcoCarbon</div>
+      </div>
 
-  const cancelEdit = () => { setIsEditing(false); setEditId(null); setInputValue(""); setCalculatedEmission(""); setActivityType("motor"); };
-  const handleLogout = async () => { await supabase.auth.signOut(); };
+      <main className="relative z-10 max-w-6xl mx-auto px-4 mt-6">
+        <AnimatePresence mode="wait">
+          {currentPage === "home" && <HomeView key="home" activities={activities} totalEmission={totalEmission} activityType={activityType} setActivityType={setActivityType} inputValue={inputValue} setInputValue={setInputValue} calculatedEmission={calculatedEmission} loading={loading} handleSubmit={handleSubmit} handleEdit={handleEdit} handleDelete={handleDelete} isEditing={isEditing} cancelEdit={cancelEdit} onViewDetail={handleViewActivity} />}
+          {currentPage === "forest" && <ForestView key="forest" activities={activities} />}
+          {currentPage === "leaderboard" && <LeaderboardView key="leaderboard" session={session} onViewUser={handleViewUser} />}
+          {currentPage === "profile" && <ProfileView key="profile" session={session} totalEmission={totalEmission} onLogout={handleLogout} />}
+          {currentPage === "about" && <AboutView key="about" />}
+          {currentPage === "activity-detail" && selectedActivity && <ActivityDetailView key="detail-act" activity={selectedActivity} onBack={() => setCurrentPage('home')} />}
+          {currentPage === "user-detail" && selectedUser && <UserDetailView key="detail-user" user={selectedUser} onBack={() => setCurrentPage('leaderboard')} />}
+        </AnimatePresence>
+      </main>
 
-  const handleViewActivity = (item) => { setSelectedActivity(item); setCurrentPage('activity-detail'); };
-  const handleViewUser = (user) => { setSelectedUser(user); setCurrentPage('user-detail'); };
+      {/* BOTTOM NAV BAR (FULL WIDTH / TIDAK MELAYANG) - INI SAJA YANG DIUBAH */}
+      <div className="fixed bottom-0 left-0 w-full bg-white border-t border-slate-200 md:hidden z-[999]">
+        <div className="flex justify-around items-center h-16 pb-1"> 
+            {[
+              { id: 'home', label: 'Home', icon: Icons.Leaf },
+              { id: 'forest', label: 'Hutan', icon: Icons.Tree },
+              { id: 'leaderboard', label: 'Top', icon: Icons.Fire },
+              { id: 'profile', label: 'Profil', icon: Icons.User },
+              { id: 'about', label: 'Info', icon: Icons.Info }
+            ].map((menu) => {
+                const isActive = currentPage === menu.id;
+                return (
+                <button 
+                    key={menu.id} 
+                    onClick={() => setCurrentPage(menu.id)} 
+                    className="relative flex flex-col items-center justify-center w-full h-full"
+                >
+                    {isActive && (
+                        <motion.div 
+                            layoutId="nav-bg" 
+                            className="absolute inset-0 bg-emerald-50 rounded-lg -z-10 mx-1 mb-1" 
+                            initial={false} 
+                            transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                        />
+                    )}
+                    <div className={`transition-all duration-300 ${isActive ? 'text-emerald-600 -translate-y-0.5' : 'text-slate-400'}`}>
+                        <menu.icon />
+                    </div>
+                    {isActive && <span className="text-[10px] font-bold text-emerald-700 mt-0.5">{menu.label}</span>}
+                </button>
+            )})}
+        </div>
+      </div>
 
-  return (
-    <div className="min-h-screen bg-slate-50 relative font-sans text-slate-800 pb-32 overflow-x-hidden">
-      
-      {isOffline && (
-        <div className="bg-red-500 text-white text-center text-xs font-bold py-2 px-4 fixed top-0 left-0 w-full z-[100] animate-pulse shadow-md">
-          📡 Anda sedang Offline. Beberapa fitur mungkin terbatas.
-        </div>
-      )}
-
-      <div className="fixed top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
-         <motion.div animate={{ x: [0, 20, 0], y: [0, -20, 0] }} transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }} className="absolute top-[-10%] right-[-5%] w-[600px] h-[600px] bg-teal-200/30 rounded-full blur-[120px]"></motion.div>
-         <motion.div animate={{ x: [0, -30, 0], y: [0, 30, 0] }} transition={{ duration: 10, repeat: Infinity, ease: "easeInOut", delay: 1 }} className="absolute bottom-[-10%] left-[-10%] w-[500px] h-[500px] bg-emerald-200/30 rounded-full blur-[150px]"></motion.div>
-      </div>
-
-      {/* TOP NAV: DESKTOP ONLY */}
-      <nav className="sticky top-0 z-50 bg-white/70 backdrop-blur-xl border-b border-white/40 shadow-sm transition-all hidden md:block">
-        <div className="max-w-6xl mx-auto px-6 py-4 flex flex-col md:flex-row gap-4 justify-between items-center">
-          <div className="flex items-center gap-2">
-            <div className="bg-gradient-to-tr from-emerald-500 to-teal-500 p-2 rounded-xl text-white shadow-lg shadow-emerald-500/30"><Icons.Leaf /></div>
-            <span className="text-xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-slate-800 to-slate-600">EcoCarbon</span>
-          </div>
-          <div className="flex bg-slate-100/50 p-1 rounded-full border border-white/50 overflow-x-auto max-w-full no-scrollbar">
-            {[{ id: 'home', label: 'Beranda' }, { id: 'forest', label: 'Hutan' }, { id: 'leaderboard', label: 'Peringkat' }, { id: 'profile', label: 'Profil' }, { id: 'about', label: 'Tentang' }]
-            .map(menu => (<button key={menu.id} onClick={() => setCurrentPage(menu.id)} className={`px-5 py-2 rounded-full text-sm font-bold transition-all whitespace-nowrap ${currentPage === menu.id ? 'bg-white text-emerald-600 shadow-sm scale-105' : 'text-slate-500 hover:text-slate-800'}`}>{menu.label}</button>))}
-          </div>
-          <button onClick={handleLogout} className="flex items-center gap-2 text-sm font-bold text-slate-500 hover:text-red-500 bg-slate-100 hover:bg-red-50 px-4 py-2 rounded-full transition-all"><Icons.LogOut /> Keluar</button>
-        </div>
-      </nav>
-
-      {/* MOBILE HEADER */}
-      <div className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-100 px-6 py-4 flex justify-center items-center md:hidden shadow-sm">
-         <div className="flex items-center gap-2">
-            <div className="bg-emerald-500 p-1.5 rounded-lg text-white shadow-md"><Icons.Leaf /></div>
-            <span className="text-lg font-extrabold text-slate-800">EcoCarbon</span>
-         </div>
-      </div>
-
-      <main className="relative z-10 max-w-6xl mx-auto px-4 md:px-6 mt-6 md:mt-10">
-        <AnimatePresence mode="wait">
-          {currentPage === "home" && <HomeView key="home" activities={activities} totalEmission={totalEmission} activityType={activityType} setActivityType={setActivityType} inputValue={inputValue} setInputValue={setInputValue} calculatedEmission={calculatedEmission} loading={loading} handleSubmit={handleSubmit} handleEdit={handleEdit} handleDelete={handleDelete} isEditing={isEditing} cancelEdit={cancelEdit} onViewDetail={handleViewActivity} />}
-          {currentPage === "forest" && <ForestView key="forest" activities={activities} />}
-          {currentPage === "leaderboard" && <LeaderboardView key="leaderboard" session={session} onViewUser={handleViewUser} />}
-          {currentPage === "profile" && <ProfileView key="profile" session={session} totalEmission={totalEmission} onLogout={handleLogout} />}
-          {currentPage === "about" && <AboutView key="about" />}
-          {currentPage === "activity-detail" && selectedActivity && <ActivityDetailView key="detail-act" activity={selectedActivity} onBack={() => setCurrentPage('home')} />}
-          {currentPage === "user-detail" && selectedUser && <UserDetailView key="detail-user" user={selectedUser} onBack={() => setCurrentPage('leaderboard')} />}
-        </AnimatePresence>
-      </main>
-
-      {/* BOTTOM NAV BAR (FULL WIDTH / TIDAK MELAYANG) - INI SAJA YANG DIUBAH */}
-      <div className="fixed bottom-0 left-0 w-full bg-white border-t border-slate-200 md:hidden z-[999]">
-        <div className="flex justify-around items-center h-16 pb-1"> 
-            {[
-              { id: 'home', label: 'Home', icon: Icons.Leaf },
-              { id: 'forest', label: 'Hutan', icon: Icons.Tree },
-              { id: 'leaderboard', label: 'Top', icon: Icons.Fire },
-              { id: 'profile', label: 'Profil', icon: Icons.User },
-              { id: 'about', label: 'Info', icon: Icons.Info }
-            ].map((menu) => {
-                const isActive = currentPage === menu.id;
-                return (
-                <button 
-                    key={menu.id} 
-                    onClick={() => setCurrentPage(menu.id)} 
-                    className="relative flex flex-col items-center justify-center w-full h-full"
-                >
-                    {isActive && (
-                        <motion.div 
-                            layoutId="nav-bg" 
-                            className="absolute inset-0 bg-emerald-100 rounded-lg -z-10 mx-1 mb-1" 
-                            initial={false} 
-                            transition={{ type: "spring", stiffness: 500, damping: 30 }}
-                        />
-                    )}
-                    <div className={`transition-all duration-300 ${isActive ? 'text-emerald-600 -translate-y-0.5' : 'text-slate-400'}`}>
-                        <menu.icon />
-                    </div>
-                    {isActive && <span className="text-[10px] font-bold text-emerald-700 mt-0.5">{menu.label}</span>}
-                </button>
-            )})}
-        </div>
-      </div>
-
-    </div>
-  );
+    </div>
+  );
 }
