@@ -9,22 +9,19 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'mask-icon.svg'],
       
-      devOptions: {
-        enabled: true 
-      },
-
       manifest: {
-        name: 'EcoCarbon - Jejak Karbon',
+        name: 'EcoCarbon',
         short_name: 'EcoCarbon',
-        description: 'Aplikasi pelacak jejak karbon harian',
+        description: 'Aplikasi Jejak Karbon',
         theme_color: '#10b981',
-        background_color: '#f8fafc',
+        background_color: '#ffffff',
         display: 'standalone',
         orientation: 'portrait',
         scope: '/',
         start_url: '/',
         icons: [
           {
+            // Pastikan file ini ada di folder public/icons/
             src: '/icons/icon-192.png', 
             sizes: '192x192',
             type: 'image/png',
@@ -43,43 +40,18 @@ export default defineConfig({
         navigateFallback: '/index.html',
         navigateFallbackDenylist: [/^\/api\//, /\.[a-z]+$/],
         globPatterns: ['**/*.{js,css,html,ico,png,svg,woff,woff2}'],
-        
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/images\.unsplash\.com\/.*/i,
             handler: 'CacheFirst',
             options: {
-              cacheName: 'unsplash-images-cache',
-              expiration: { maxEntries: 20, maxAgeSeconds: 60 * 60 * 24 * 7 },
+              cacheName: 'unsplash-images',
+              expiration: { maxEntries: 50, maxAgeSeconds: 60 * 60 * 24 * 30 },
               cacheableResponse: { statuses: [0, 200] }
             }
-          },
-          {
-            urlPattern: ({ url }) => url.hostname.includes('supabase.co'),
-            handler: 'NetworkFirst',
-            options: {
-              cacheName: 'supabase-api-cache',
-              expiration: { maxEntries: 50, maxAgeSeconds: 60 * 60 * 24 },
-              networkTimeoutSeconds: 10
-            }
           }
-        ],
-        cleanupOutdatedCaches: true,
-        skipWaiting: true,
-        clientsClaim: true
+        ]
       }
     })
   ],
-  build: {
-    outDir: 'dist',
-    sourcemap: false,
-    rollupOptions: {
-      output: {
-        manualChunks: {
-          'react-vendor': ['react', 'react-dom'],
-          'supabase-vendor': ['@supabase/supabase-js']
-        }
-      }
-    }
-  }
 })

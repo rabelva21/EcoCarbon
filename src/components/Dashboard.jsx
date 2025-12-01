@@ -8,8 +8,13 @@ import confetti from "canvas-confetti";
 // ==========================================
 const Icons = {
   Leaf: () => <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 3v4M3 5v4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path></svg>,
+  
+  // Tree Biasa untuk Navbar (Sesuai Request)
   Tree: () => <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>,
-  TreeSolid: () => <svg className="w-10 h-10" fill="currentColor" stroke="none" viewBox="0 0 24 24"><path d="M12 2L2 19h20L12 2zm0 3.5l6 10.5h-12l6-10.5z" opacity=".5"/><path d="M12 5l-7 12h14l-7-12zm0 14v3h-2v-3h2z"/></svg>,
+  
+  // PineTree Khusus Halaman Hutan (Sesuai Request)
+  PineTree: () => <svg className="w-12 h-12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C12 2 7 10 7 10C7 10 9.5 10 9.5 10C9.5 10 6 16 6 16C6 16 8.5 16 8.5 16C8.5 16 5 22 5 22H19C19 22 15.5 16 15.5 16C15.5 16 18 16 18 16C18 16 14.5 10 14.5 10C14.5 10 17 10 17 10C17 10 12 2 12 2Z" fill="#10B981"/><path d="M12 22V24" stroke="#8D6E63" strokeWidth="2" strokeLinecap="round"/></svg>,
+  
   Fire: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.879 16.121A3 3 0 1012.015 11L11 14H9c0 .768.293 1.536.879 2.121z"></path></svg>,
   Trash: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>,
   Plus: () => <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4"></path></svg>,
@@ -46,17 +51,14 @@ const isToday = (dateString) => {
   if (!dateString) return false;
   const date = new Date(dateString);
   const today = new Date();
-  return date.getDate() === today.getDate() &&
-         date.getMonth() === today.getMonth() &&
-         date.getFullYear() === today.getFullYear();
+  return date.getDate() === today.getDate() && date.getMonth() === today.getMonth() && date.getFullYear() === today.getFullYear();
 };
 
 const isThisMonth = (dateString) => {
   if (!dateString) return false;
   const date = new Date(dateString);
   const today = new Date();
-  return date.getMonth() === today.getMonth() &&
-         date.getFullYear() === today.getFullYear();
+  return date.getMonth() === today.getMonth() && date.getFullYear() === today.getFullYear();
 };
 
 // ==========================================
@@ -107,7 +109,7 @@ const HomeView = ({ activities, activityType, setActivityType, inputValue, setIn
               <p className="text-slate-500 font-medium">Belum ada data aktivitas.</p>
             </div>
           ) : (
-            <div className="grid gap-3">
+            <div className="grid gap-3 pb-24">
               <AnimatePresence>
               {activities.map((item) => (
                 <motion.div 
@@ -116,9 +118,9 @@ const HomeView = ({ activities, activityType, setActivityType, inputValue, setIn
                     initial={{ opacity: 0, x: -20 }} 
                     animate={{ opacity: 1, x: 0 }} 
                     exit={{ opacity: 0, height: 0 }} 
-                    className="group relative flex flex-col sm:flex-row justify-between items-start sm:items-center p-5 rounded-2xl bg-white/80 border border-white shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer gap-4"
+                    className="group relative flex flex-col justify-between p-5 rounded-2xl bg-white/80 border border-white shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer gap-4"
                 >
-                  <div className="flex items-center gap-4 w-full sm:w-auto">
+                  <div className="flex items-center gap-4">
                     <div className="p-3 rounded-2xl bg-emerald-50 text-emerald-600 shadow-sm shrink-0"><Icons.Fire /></div>
                     <div className="min-w-0 flex-1">
                       <h4 className="font-bold text-lg text-slate-700 truncate">{item.activity}</h4>
@@ -126,7 +128,7 @@ const HomeView = ({ activities, activityType, setActivityType, inputValue, setIn
                     </div>
                   </div>
                   
-                  <div className="flex items-center justify-between w-full sm:w-auto gap-4 pl-0 sm:pl-4 sm:border-l border-slate-100">
+                  <div className="flex items-center justify-between w-full pt-3 border-t border-slate-100 mt-1">
                     <span className="font-extrabold text-xl text-slate-700">{item.amount} <span className="text-sm font-normal text-slate-400">kg</span></span>
                     <div className="flex gap-2">
                       <button onClick={(e) => { e.stopPropagation(); handleEdit(item); }} className="px-3 py-2 bg-amber-50 text-amber-500 hover:bg-amber-100 rounded-xl text-sm font-bold flex items-center gap-1 transition-colors">
@@ -166,20 +168,23 @@ const HomeView = ({ activities, activityType, setActivityType, inputValue, setIn
               <label className="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">{activityType === 'manual' ? 'Emisi (kg)' : `Jumlah (${EMISSION_FACTORS[activityType].unit})`}</label>
               <input type="number" placeholder="0" className="w-full px-5 py-4 rounded-2xl bg-slate-50 border-2 border-transparent focus:bg-white focus:border-emerald-400 outline-none font-bold text-xl text-slate-800" value={inputValue} onChange={(e) => setInputValue(e.target.value)} />
             </div>
-            {!isEditing && activityType !== 'manual' && (
-              <div className="bg-emerald-50 p-4 rounded-2xl flex justify-between items-center border border-emerald-100">
-                <span className="text-sm font-bold text-emerald-600">Estimasi:</span>
-                <span className="text-2xl font-black text-emerald-700">{calculatedEmission || 0} <span className="text-sm font-medium">kg CO₂</span></span>
-              </div>
-            )}
             <motion.button whileTap={{ scale: 0.95 }} disabled={!calculatedEmission || loading} className={`w-full py-4 rounded-2xl font-bold text-lg text-white shadow-lg transition disabled:opacity-50 ${isEditing ? 'bg-amber-500 hover:bg-amber-600' : 'bg-slate-900 hover:bg-emerald-600'}`}>{loading ? "Menyimpan..." : isEditing ? "Simpan Perubahan" : "Tambahkan"}</motion.button>
           </form>
         </div>
+
+        {/* TIPS CEPAT DIKEMBALIKAN */}
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="bg-blue-50/50 border border-blue-100 p-6 rounded-3xl">
+          <h4 className="font-bold text-blue-800 mb-2 text-sm flex items-center gap-2">💡 Tips Cepat</h4>
+          <p className="text-xs text-blue-600 leading-relaxed">
+            Ingin mengurangi emisi? Coba gunakan transportasi umum setidaknya 2x seminggu. Efeknya besar lho untuk bumi kita! 🌍
+          </p>
+        </motion.div>
       </div>
     </motion.div>
   );
 };
 
+// --- HALAMAN DETAIL AKTIVITAS ---
 const ActivityDetailView = ({ activity, onBack }) => {
     return (
         <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="max-w-2xl mx-auto pb-24">
@@ -187,7 +192,7 @@ const ActivityDetailView = ({ activity, onBack }) => {
                 <Icons.ArrowLeft /> Kembali
             </button>
             <div className="bg-white rounded-[2.5rem] shadow-xl border border-slate-100 overflow-hidden">
-                <div className="bg-slate-900 p-8 text-white relative">
+                <div className="bg-slate-900 p-8 text-white relative overflow-hidden">
                     <div className="absolute top-0 right-0 p-8 opacity-10 scale-[2]"><Icons.Fire /></div>
                     <p className="text-slate-400 font-bold uppercase text-xs mb-2">Detail Aktivitas</p>
                     <h2 className="text-3xl font-bold">{activity.activity}</h2>
@@ -205,7 +210,7 @@ const ActivityDetailView = ({ activity, onBack }) => {
     )
 }
 
-// --- HALAMAN 2: HUTAN ---
+// --- HALAMAN 2: HUTAN (POHON BAGUS & KETERANGAN BARU) ---
 const ForestView = ({ activities }) => {
   const monthlyEmission = useMemo(() => {
     try {
@@ -216,7 +221,7 @@ const ForestView = ({ activities }) => {
   return (
     <motion.div initial="initial" animate="in" exit="out" variants={pageVariants} className="text-center pb-32">
       <div className="relative rounded-[3rem] shadow-2xl overflow-hidden min-h-[500px] md:min-h-[600px] flex flex-col justify-end border-4 border-white bg-slate-800">
-        {/* BACKGROUND HUTAN */}
+        {/* BACKGROUND HUTAN DIKEMBALIKAN */}
         <div className="absolute inset-0 z-0">
             <img src="https://images.unsplash.com/photo-1511497584788-876760111969?q=80&w=2670&auto=format&fit=crop" alt="Forest Art" className="w-full h-full object-cover opacity-80"/>
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-slate-800"></div>
@@ -224,10 +229,19 @@ const ForestView = ({ activities }) => {
         <div className="relative z-10 p-8 mb-auto mt-10">
             <h2 className="text-3xl font-extrabold text-white mb-2">🌲 Hutan Bulan Ini</h2>
             <p className="text-white text-lg font-medium">Emisi: <span className="font-bold text-yellow-300">{monthlyEmission.toFixed(2)} kg</span></p>
+            
+            {/* DESKRIPSI TAMBAHAN HUTAN */}
+            <p className="text-white/90 text-sm mt-3 leading-relaxed max-w-md mx-auto">
+               Hutan ini mencerminkan jejak karbonmu bulan ini. Semakin sedikit emisimu, semakin lebat hutan yang kamu jaga.
+               Ayo pertahankan kehijauan hutan virtualmu dengan mengurangi emisi harian! 🌍✨
+            </p>
         </div>
         <div className="relative z-10 px-6 pb-12 flex flex-wrap justify-center items-end gap-[-10px]">
           {Array.from({ length: treeCount }).map((_, i) => (
-            <motion.div key={i} initial={{ scale: 0, y: 100 }} animate={{ scale: 1, y: 0 }} transition={{ delay: i * 0.05 }} className="text-emerald-400 w-16 h-16"><Icons.TreeSolid /></motion.div>
+            <motion.div key={i} initial={{ scale: 0, y: 100 }} animate={{ scale: 1, y: 0 }} transition={{ delay: i * 0.05 }} className="text-emerald-400 drop-shadow-[0_10px_10px_rgba(0,0,0,0.8)] hover:scale-110 transition-transform">
+                {/* ICON POHON BARU (CEMARA) */}
+                <Icons.PineTree /> 
+            </motion.div>
           ))}
         </div>
       </div>
@@ -235,6 +249,7 @@ const ForestView = ({ activities }) => {
   );
 };
 
+// --- HALAMAN 3: LEADERBOARD ---
 const LeaderboardView = ({ session, onViewUser }) => {
   const [filter, setFilter] = useState('total'); 
   const [leaderboardData, setLeaderboardData] = useState([]);
@@ -285,6 +300,7 @@ const LeaderboardView = ({ session, onViewUser }) => {
   );
 };
 
+// --- HALAMAN DETAIL USER (DESKRIPSI PANJANG) ---
 const UserDetailView = ({ user, onBack }) => (
     <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="max-w-md mx-auto pb-32">
         <button onClick={onBack} className="flex items-center gap-2 text-slate-500 font-bold mb-6"><Icons.ArrowLeft /> Kembali</button>
@@ -292,17 +308,23 @@ const UserDetailView = ({ user, onBack }) => (
             <div className="w-24 h-24 mx-auto bg-slate-100 rounded-full mb-4 overflow-hidden">{user.avatar ? <img src={user.avatar} className="w-full h-full object-cover"/> : <span className="text-4xl leading-[6rem]">👤</span>}</div>
             <h2 className="text-2xl font-black text-slate-800">{user.name}</h2>
             
-            <div className="mt-6 bg-slate-50 p-4 rounded-2xl text-sm text-slate-600 leading-relaxed border border-slate-100 text-left">
-                <p>Halo! <strong>{user.name}</strong> adalah salah satu pahlawan bumi.</p>
-                <ul className="list-disc ml-4 mt-2 space-y-1">
-                    <li>Emisi Bulan Ini: <strong className="text-emerald-600">{user.monthly?.toFixed(2) || 0} kg</strong></li>
-                    <li>Total Kontribusi: <strong className="text-indigo-600">{user.total?.toFixed(2) || 0} kg</strong></li>
-                </ul>
+            {/* DESKRIPSI PANJANG DI SINI */}
+            <div className="mt-6 bg-slate-50 p-5 rounded-2xl text-sm text-slate-600 leading-loose border border-slate-100 text-justify">
+                <p className="mb-3">
+                   Halo! <strong>{user.name}</strong> adalah salah satu pahlawan lingkungan yang aktif berkontribusi dalam menjaga bumi kita.
+                   Melalui aplikasi EcoCarbon, ia telah secara konsisten memantau jejak karbon hariannya.
+                </p>
+                <p>
+                   Pada bulan ini saja, total emisi yang tercatat mencapai <strong className="text-emerald-600">{user.monthly?.toFixed(2) || 0} kg</strong>.
+                   Dan sejak awal bergabung, total kontribusi jejak karbonnya adalah <strong className="text-indigo-600">{user.total?.toFixed(2) || 0} kg</strong>.
+                   Mari kita dukung terus upaya baik ini! 🌍✨
+                </p>
             </div>
         </div>
     </motion.div>
 );
 
+// --- HALAMAN 4: PROFIL (UPLOAD FOTO + DESKRIPSI) ---
 const ProfileView = ({ session, totalEmission, onLogout }) => {
   const [username, setUsername] = useState(session.user.user_metadata.user_name || 'Anonymous');
   const [avatarUrl, setAvatarUrl] = useState(session.user.user_metadata.avatar_url || null);
@@ -340,6 +362,7 @@ const ProfileView = ({ session, totalEmission, onLogout }) => {
                 <div className="w-28 h-28 bg-white p-1 rounded-full shadow-lg mb-4 overflow-hidden border-4 border-white">
                     {avatarUrl ? <img src={avatarUrl} className="w-full h-full object-cover rounded-full"/> : <span className="text-5xl leading-[6rem]">😎</span>}
                 </div>
+                {/* TOMBOL UPLOAD FOTO (KEMBALI ADA) */}
                 {isEdit && (
                   <label className="absolute bottom-4 right-0 bg-slate-800 text-white p-3 rounded-full cursor-pointer hover:bg-slate-700 shadow-md transition-all">
                     {uploading ? <span className="block w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></span> : <Icons.Pencil />}
@@ -368,6 +391,7 @@ const ProfileView = ({ session, totalEmission, onLogout }) => {
   );
 };
 
+// --- HALAMAN 5: ABOUT ---
 const AboutView = () => (
     <motion.div initial="initial" animate="in" exit="out" variants={pageVariants} className="max-w-2xl mx-auto pb-32 text-center">
         <div className="bg-white rounded-[2.5rem] shadow-xl p-8 border border-slate-100">
@@ -454,7 +478,7 @@ export default function Dashboard({ session }) {
     <div className="min-h-screen bg-slate-50 font-sans text-slate-800 pb-0 overflow-x-hidden">
       {isOffline && <div className="bg-red-500 text-white text-center text-xs font-bold py-2 fixed top-0 w-full z-[100]">📡 Offline Mode</div>}
       
-      {/* HEADER DESKTOP */}
+      {/* HEADER DESKTOP - (Hanya muncul di layar besar) */}
       <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-white/50 px-6 py-4 hidden md:flex justify-between items-center">
         <div className="flex items-center gap-2 font-black text-xl text-emerald-600"><Icons.Leaf /> EcoCarbon</div>
         <div className="flex gap-2">
@@ -482,12 +506,12 @@ export default function Dashboard({ session }) {
         </AnimatePresence>
       </main>
 
-      {/* BOTTOM NAV BAR (FULL WIDTH & FIXED BOTTOM) */}
+      {/* BOTTOM NAV BAR (FULL WIDTH - FIXED BOTTOM - WAJIB MUNCUL DI HP) */}
       <div className="fixed bottom-0 left-0 w-full bg-white border-t border-slate-200 z-[9999] block md:hidden">
         <div className="flex justify-around items-center h-16 pb-1"> 
             {[
               { id: 'home', label: 'Home', icon: Icons.Leaf },
-              { id: 'forest', label: 'Hutan', icon: Icons.Tree },
+              { id: 'forest', label: 'Hutan', icon: Icons.Tree }, // Icon Tree Kembali Semula
               { id: 'leaderboard', label: 'Top', icon: Icons.Fire },
               { id: 'profile', label: 'Profil', icon: Icons.User },
               { id: 'about', label: 'Info', icon: Icons.Info }
