@@ -645,9 +645,9 @@ export default function Dashboard({ session }) {
         </AnimatePresence>
       </main>
 
-      {/* BOTTOM NAV BAR (ESTETIK) */}
-      <div className="fixed bottom-0 left-0 w-full md:hidden z-50">
-        <div className="mx-4 mb-4 bg-white/90 backdrop-blur-lg border border-white/50 shadow-[0_-5px_20px_rgba(0,0,0,0.05)] rounded-2xl p-2 flex justify-around items-center">
+      {/* BOTTOM NAV BAR (FULL WIDTH / TIDAK MELAYANG) - INI SAJA YANG DIUBAH */}
+      <div className="fixed bottom-0 left-0 w-full bg-white border-t border-slate-200 md:hidden z-[999]">
+        <div className="flex justify-around items-center h-16 pb-1"> 
             {[
               { id: 'home', label: 'Home', icon: Icons.Leaf },
               { id: 'forest', label: 'Hutan', icon: Icons.Tree },
@@ -660,20 +660,20 @@ export default function Dashboard({ session }) {
                 <button 
                     key={menu.id} 
                     onClick={() => setCurrentPage(menu.id)} 
-                    className="relative flex flex-col items-center justify-center w-full h-12"
+                    className="relative flex flex-col items-center justify-center w-full h-full"
                 >
                     {isActive && (
                         <motion.div 
                             layoutId="nav-bg" 
-                            className="absolute inset-0 bg-emerald-100 rounded-xl -z-10" 
+                            className="absolute inset-0 bg-emerald-100 rounded-lg -z-10 mx-1 mb-1" 
                             initial={false} 
                             transition={{ type: "spring", stiffness: 500, damping: 30 }}
                         />
                     )}
-                    <div className={`transition-all duration-300 ${isActive ? 'text-emerald-600 scale-110 -translate-y-1' : 'text-slate-400'}`}>
+                    <div className={`transition-all duration-300 ${isActive ? 'text-emerald-600 -translate-y-0.5' : 'text-slate-400'}`}>
                         <menu.icon />
                     </div>
-                    {isActive && <span className="text-[9px] font-bold text-emerald-700 mt-0.5">{menu.label}</span>}
+                    {isActive && <span className="text-[10px] font-bold text-emerald-700 mt-0.5">{menu.label}</span>}
                 </button>
             )})}
         </div>
