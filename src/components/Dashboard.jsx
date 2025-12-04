@@ -8,13 +8,8 @@ import confetti from "canvas-confetti";
 // ==========================================
 const Icons = {
   Leaf: () => <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 3v4M3 5v4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path></svg>,
-  
-  // Tree Biasa untuk Navbar (Sesuai Request)
   Tree: () => <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>,
-  
-  // PineTree Khusus Halaman Hutan (Sesuai Request)
   PineTree: () => <svg className="w-12 h-12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C12 2 7 10 7 10C7 10 9.5 10 9.5 10C9.5 10 6 16 6 16C6 16 8.5 16 8.5 16C8.5 16 5 22 5 22H19C19 22 15.5 16 15.5 16C15.5 16 18 16 18 16C18 16 14.5 10 14.5 10C14.5 10 17 10 17 10C17 10 12 2 12 2Z" fill="#10B981"/><path d="M12 22V24" stroke="#8D6E63" strokeWidth="2" strokeLinecap="round"/></svg>,
-  
   Fire: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.879 16.121A3 3 0 1012.015 11L11 14H9c0 .768.293 1.536.879 2.121z"></path></svg>,
   Trash: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>,
   Plus: () => <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4"></path></svg>,
@@ -172,7 +167,7 @@ const HomeView = ({ activities, activityType, setActivityType, inputValue, setIn
           </form>
         </div>
 
-        {/* TIPS CEPAT DIKEMBALIKAN */}
+        {/* TIPS CEPAT */}
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="bg-blue-50/50 border border-blue-100 p-6 rounded-3xl">
           <h4 className="font-bold text-blue-800 mb-2 text-sm flex items-center gap-2">💡 Tips Cepat</h4>
           <p className="text-xs text-blue-600 leading-relaxed">
@@ -184,7 +179,7 @@ const HomeView = ({ activities, activityType, setActivityType, inputValue, setIn
   );
 };
 
-// --- HALAMAN DETAIL AKTIVITAS ---
+// --- HALAMAN DETAIL AKTIVITAS (POPUP DARI HOME) ---
 const ActivityDetailView = ({ activity, onBack }) => {
     return (
         <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="max-w-2xl mx-auto pb-24">
@@ -210,7 +205,7 @@ const ActivityDetailView = ({ activity, onBack }) => {
     )
 }
 
-// --- HALAMAN 2: HUTAN (POHON BAGUS & KETERANGAN BARU) ---
+// --- HALAMAN 2: HUTAN ---
 const ForestView = ({ activities }) => {
   const monthlyEmission = useMemo(() => {
     try {
@@ -221,7 +216,6 @@ const ForestView = ({ activities }) => {
   return (
     <motion.div initial="initial" animate="in" exit="out" variants={pageVariants} className="text-center pb-32">
       <div className="relative rounded-[3rem] shadow-2xl overflow-hidden min-h-[500px] md:min-h-[600px] flex flex-col justify-end border-4 border-white bg-slate-800">
-        {/* BACKGROUND HUTAN DIKEMBALIKAN */}
         <div className="absolute inset-0 z-0">
             <img src="https://images.unsplash.com/photo-1511497584788-876760111969?q=80&w=2670&auto=format&fit=crop" alt="Forest Art" className="w-full h-full object-cover opacity-80"/>
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-slate-800"></div>
@@ -230,7 +224,6 @@ const ForestView = ({ activities }) => {
             <h2 className="text-3xl font-extrabold text-white mb-2">🌲 Hutan Bulan Ini</h2>
             <p className="text-white text-lg font-medium">Emisi: <span className="font-bold text-yellow-300">{monthlyEmission.toFixed(2)} kg</span></p>
             
-            {/* DESKRIPSI TAMBAHAN HUTAN */}
             <p className="text-white/90 text-sm mt-3 leading-relaxed max-w-md mx-auto">
                Hutan ini mencerminkan jejak karbonmu bulan ini. Semakin sedikit emisimu, semakin lebat hutan yang kamu jaga.
                Ayo pertahankan kehijauan hutan virtualmu dengan mengurangi emisi harian! 🌍✨
@@ -239,7 +232,6 @@ const ForestView = ({ activities }) => {
         <div className="relative z-10 px-6 pb-12 flex flex-wrap justify-center items-end gap-[-10px]">
           {Array.from({ length: treeCount }).map((_, i) => (
             <motion.div key={i} initial={{ scale: 0, y: 100 }} animate={{ scale: 1, y: 0 }} transition={{ delay: i * 0.05 }} className="text-emerald-400 drop-shadow-[0_10px_10px_rgba(0,0,0,0.8)] hover:scale-110 transition-transform">
-                {/* ICON POHON BARU (CEMARA) */}
                 <Icons.PineTree /> 
             </motion.div>
           ))}
@@ -249,7 +241,7 @@ const ForestView = ({ activities }) => {
   );
 };
 
-// --- HALAMAN 3: LEADERBOARD ---
+// --- HALAMAN 3: LEADERBOARD (UPDATED) ---
 const LeaderboardView = ({ session, onViewUser }) => {
   const [filter, setFilter] = useState('total'); 
   const [leaderboardData, setLeaderboardData] = useState([]);
@@ -264,14 +256,41 @@ const LeaderboardView = ({ session, onViewUser }) => {
         data.forEach(item => {
           const uid = item.user_id;
           const val = parseFloat(item.amount) || 0;
-          if (!grouped[uid]) grouped[uid] = { id: uid, name: item.user_name || "Anonymous", avatar: item.avatar_url, total: 0, daily: 0, monthly: 0 };
+          
+          if (!grouped[uid]) {
+            grouped[uid] = { 
+                id: uid, 
+                name: item.user_name || "Anonymous", 
+                avatar: item.avatar_url, 
+                total: 0, 
+                daily: 0, 
+                monthly: 0,
+                // --- UPDATE: Inisialisasi array history ---
+                history: []
+            };
+          }
+          
           if (item.user_name && item.user_name !== "Anonymous") grouped[uid].name = item.user_name;
           if (item.avatar_url) grouped[uid].avatar = item.avatar_url;
+          
           grouped[uid].total += val;
           if (isToday(item.created_at)) grouped[uid].daily += val;
           if (isThisMonth(item.created_at)) grouped[uid].monthly += val;
+
+          // --- UPDATE: Simpan item aktivitas ke history user ---
+          grouped[uid].history.push(item);
         });
-        setLeaderboardData(Object.values(grouped).map(u => ({ ...u, score: u[filter], monthly: u.monthly, total: u.total, isMe: u.id === session.user.id })).sort((a, b) => a.score - b.score));
+
+        // Urutkan data berdasarkan score (ascending: emisi terendah paling atas)
+        setLeaderboardData(Object.values(grouped).map(u => ({ 
+            ...u, 
+            score: u[filter], 
+            monthly: u.monthly, 
+            total: u.total, 
+            isMe: u.id === session.user.id,
+            // Urutkan history dari yang terbaru
+            history: u.history.sort((a,b) => new Date(b.created_at) - new Date(a.created_at)) 
+        })).sort((a, b) => a.score - b.score));
       }
       setLoadingLB(false);
     };
@@ -290,7 +309,7 @@ const LeaderboardView = ({ session, onViewUser }) => {
                 <div className="flex items-center gap-3">
                     <span className="font-bold text-slate-400 w-6 text-center">{idx + 1}</span>
                     <div className="w-10 h-10 rounded-full bg-slate-200 overflow-hidden">{user.avatar ? <img src={user.avatar} className="w-full h-full object-cover"/> : <span className="flex items-center justify-center h-full">👤</span>}</div>
-                    <div><p className="font-bold text-sm text-slate-700 truncate max-w-[120px]">{user.name}</p>{user.isMe && <span className="text-[10px] bg-indigo-100 text-indigo-600 px-2 rounded-full">You</span>}</div>
+                    <div><p className="font-bold text-sm text-slate-700 truncate max-w-[120px]">{user.name}</p>{user.id === session.user.id && <span className="text-[10px] bg-indigo-100 text-indigo-600 px-2 rounded-full">You</span>}</div>
                 </div>
                 <span className="font-mono font-bold text-lg text-slate-700">{user.score.toFixed(1)}</span>
             </div>
@@ -300,15 +319,15 @@ const LeaderboardView = ({ session, onViewUser }) => {
   );
 };
 
-// --- HALAMAN DETAIL USER (DESKRIPSI PANJANG) ---
+// --- HALAMAN DETAIL USER (UPDATED: DENGAN PARAGRAF & DAFTAR AKTIVITAS) ---
 const UserDetailView = ({ user, onBack }) => (
     <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="max-w-md mx-auto pb-32">
-        <button onClick={onBack} className="flex items-center gap-2 text-slate-500 font-bold mb-6"><Icons.ArrowLeft /> Kembali</button>
+        <button onClick={onBack} className="flex items-center gap-2 text-slate-500 font-bold mb-6 hover:text-slate-800 transition-colors"><Icons.ArrowLeft /> Kembali</button>
         <div className="bg-white rounded-[3rem] shadow-xl p-8 text-center border border-slate-100">
             <div className="w-24 h-24 mx-auto bg-slate-100 rounded-full mb-4 overflow-hidden">{user.avatar ? <img src={user.avatar} className="w-full h-full object-cover"/> : <span className="text-4xl leading-[6rem]">👤</span>}</div>
             <h2 className="text-2xl font-black text-slate-800">{user.name}</h2>
             
-            {/* DESKRIPSI PANJANG DI SINI */}
+            {/* 1. PARAGRAF DESKRIPSI (TETAP ADA SESUAI REQUEST) */}
             <div className="mt-6 bg-slate-50 p-5 rounded-2xl text-sm text-slate-600 leading-loose border border-slate-100 text-justify">
                 <p className="mb-3">
                    Halo! <strong>{user.name}</strong> adalah salah satu pahlawan lingkungan yang aktif berkontribusi dalam menjaga bumi kita.
@@ -320,11 +339,40 @@ const UserDetailView = ({ user, onBack }) => (
                    Mari kita dukung terus upaya baik ini! 🌍✨
                 </p>
             </div>
+
+            {/* 2. DAFTAR RIWAYAT AKTIVITAS (DETAIL NGAPAIN AJA) */}
+            <div className="mt-8 text-left">
+                <h3 className="font-bold text-slate-800 mb-4 flex items-center gap-2">
+                    <Icons.Fire /> Riwayat Aktivitas
+                </h3>
+                <div className="space-y-3 max-h-[400px] overflow-y-auto pr-1 custom-scrollbar">
+                    {user.history && user.history.length > 0 ? (
+                        user.history.map((item, idx) => (
+                            <div key={item.id || idx} className="flex justify-between items-center p-3 bg-slate-50 rounded-2xl border border-slate-100 hover:bg-slate-100 transition-colors">
+                                <div>
+                                    {/* Menampilkan aktivitas lengkap (misal: "Naik Motor (15 km)") */}
+                                    <p className="font-bold text-sm text-slate-700">{item.activity}</p>
+                                    <p className="text-[10px] text-slate-400 font-bold uppercase mt-0.5">
+                                        {new Date(item.created_at).toLocaleDateString()}
+                                    </p>
+                                </div>
+                                <span className="font-black text-emerald-600 text-sm whitespace-nowrap bg-white px-2 py-1 rounded-lg border border-slate-200">
+                                    {item.amount} kg
+                                </span>
+                            </div>
+                        ))
+                    ) : (
+                        <div className="text-center py-4 text-slate-400 text-sm italic">
+                            Belum ada riwayat aktivitas yang tercatat.
+                        </div>
+                    )}
+                </div>
+            </div>
         </div>
     </motion.div>
 );
 
-// --- HALAMAN 4: PROFIL (UPLOAD FOTO + DESKRIPSI) ---
+// --- HALAMAN 4: PROFIL ---
 const ProfileView = ({ session, totalEmission, onLogout }) => {
   const [username, setUsername] = useState(session.user.user_metadata.user_name || 'Anonymous');
   const [avatarUrl, setAvatarUrl] = useState(session.user.user_metadata.avatar_url || null);
@@ -362,7 +410,6 @@ const ProfileView = ({ session, totalEmission, onLogout }) => {
                 <div className="w-28 h-28 bg-white p-1 rounded-full shadow-lg mb-4 overflow-hidden border-4 border-white">
                     {avatarUrl ? <img src={avatarUrl} className="w-full h-full object-cover rounded-full"/> : <span className="text-5xl leading-[6rem]">😎</span>}
                 </div>
-                {/* TOMBOL UPLOAD FOTO (KEMBALI ADA) */}
                 {isEdit && (
                   <label className="absolute bottom-4 right-0 bg-slate-800 text-white p-3 rounded-full cursor-pointer hover:bg-slate-700 shadow-md transition-all">
                     {uploading ? <span className="block w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></span> : <Icons.Pencil />}
@@ -478,7 +525,7 @@ export default function Dashboard({ session }) {
     <div className="min-h-screen bg-slate-50 font-sans text-slate-800 pb-0 overflow-x-hidden">
       {isOffline && <div className="bg-red-500 text-white text-center text-xs font-bold py-2 fixed top-0 w-full z-[100]">📡 Offline Mode</div>}
       
-      {/* HEADER DESKTOP - (Hanya muncul di layar besar) */}
+      {/* HEADER DESKTOP */}
       <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-white/50 px-6 py-4 hidden md:flex justify-between items-center">
         <div className="flex items-center gap-2 font-black text-xl text-emerald-600"><Icons.Leaf /> EcoCarbon</div>
         <div className="flex gap-2">
@@ -506,12 +553,12 @@ export default function Dashboard({ session }) {
         </AnimatePresence>
       </main>
 
-      {/* BOTTOM NAV BAR (FULL WIDTH - FIXED BOTTOM - WAJIB MUNCUL DI HP) */}
+      {/* BOTTOM NAV BAR */}
       <div className="fixed bottom-0 left-0 w-full bg-white border-t border-slate-200 z-[9999] block md:hidden">
         <div className="flex justify-around items-center h-16 pb-1"> 
             {[
               { id: 'home', label: 'Home', icon: Icons.Leaf },
-              { id: 'forest', label: 'Hutan', icon: Icons.Tree }, // Icon Tree Kembali Semula
+              { id: 'forest', label: 'Hutan', icon: Icons.Tree },
               { id: 'leaderboard', label: 'Top', icon: Icons.Fire },
               { id: 'profile', label: 'Profil', icon: Icons.User },
               { id: 'about', label: 'Info', icon: Icons.Info }
